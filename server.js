@@ -8,10 +8,11 @@ var express = require('express')
 var logger = require('morgan')
 var app = express()
 var routes = require('./routes')
+var config = require('./config.json')
 
 // For deployment to Heroku, the port needs to be set using ENV, so
 // we check for the port number in process.env
-app.set('port', (process.env.PORT || 9001))
+app.set('port', (process.env.PORT || config.port))
 
 app.enable('verbose errors')
 
@@ -65,5 +66,5 @@ app.use(function (err, req, res, next) {
 })
 
 var server = app.listen(app.get('port'), function () {
-  console.log('Server listening on port %s', app.get('port'))
+  console.log('Server listening at http://%s:%s', config.host, app.get('port'))
 })
