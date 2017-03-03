@@ -9,7 +9,9 @@
     "id" : "0",
     "name": "PPAP",
     "color": "#DFFF00",
-    "head_url": "",
+    "head_url": "https://stembolthq.github.io/battle_snake/tongue-snakehead.png",
+    "head_type": "tongue",
+    "tail_type": "skinny-tail",
     "taunt": {
       "move": "Pen-Pineapple-Apple-Pen!",
       "start": "I have a pen~ I have an apple~"
