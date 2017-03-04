@@ -174,7 +174,7 @@ describe('Testing the functions in utils', function() {
 
       from = [5, 5]
       to = [5, 6]
-      assert.equal(utils.getDirection(from, to), 'up')
+      assert.equal(utils.getDirection(from, to), 'down')
 
       from = [5, 5]
       to = [6, 5]
@@ -182,7 +182,7 @@ describe('Testing the functions in utils', function() {
 
       from = [5, 5]
       to = [5, 4]
-      assert.equal(utils.getDirection(from, to), 'down')
+      assert.equal(utils.getDirection(from, to), 'up')
 
       from = [5, 5]
       to = [4, 5]

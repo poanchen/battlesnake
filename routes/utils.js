@@ -3,7 +3,14 @@ var pf = require('pathfinding')
 //: D
 // 1
 function findHead(mySnake, otherSnakes) {
-	return [1, 1]
+
+  for(var i=0;i<otherSnakes.length;i++){
+      if(otherSnakes[i].id==mySnake.id){
+        return otherSnakes[i].coords[0]
+      }
+  }
+  return []
+
 }
 
 //: B,D
@@ -37,7 +44,22 @@ function findClosestFood(snakeHead, food, grid) {
 // 1
 function getDirection(from, to) {
   // one of: ['up','down','left','right']
-  return [1, 9]
+   var dirx = to[0] - from[0]
+    var diry = to[1] - from[1]
+
+    if (dirx == 1){
+        return 'right'
+      }
+    else if( dirx == -1){
+        return 'left'
+      }
+    else if (diry == -1){
+        return 'up'
+    }
+    else if (diry == 1){
+        return 'down'
+      }
+  
 }
 
 //: B
