@@ -23,8 +23,6 @@ router.post(config.route.start, function (req, res) {
 
 // Handle POST request to '/move'
 router.post(config.route.move, function (req, res) {
-  // NOTE: Do something here to generate your move
-
   var body = req.body
   var mySnake = {
     id: body.you
@@ -36,18 +34,7 @@ router.post(config.route.move, function (req, res) {
   var food = body.food
   var nextMove = 'up'
 
-  // console.dir(utils.findHead(mySnake, otherSnakes), {
-  //   depth: null,
-  //   colors: true
-  // })
-
-  // console.log(utils.initGrid({
-  //   width: body.width,
-  //   height: body.height,
-  //   snakes: otherSnakes
-  // }))
-
-  var closestFood = utils.findClosestFood([15, 15], food,
+  var resultFromFindClosestFood = utils.findClosestFoodAndPath(utils.findHead(mySnake, otherSnakes), food,
     new pf.Grid(
       utils.initGrid({
         width: body.width,
@@ -56,18 +43,12 @@ router.post(config.route.move, function (req, res) {
       })
     ))
 
-  // console.log(closestFood)
-
-  // var closestFood = utils.findClosestFood(utils.findHead(mySnake, otherSnakes), food)
-
-  // try to get to the clostest food
-  // nextMove = utils.findNextMove(mySnake, otherSnakes, closestFood)
-
-  // console.log(utils.initGrid({
-  //   width: body.width,
-  //   height: body.height,
-  //   snakes: otherSnakes
-  // }))
+  nextMove = utils.findNextMove({
+    mySnake: mySnake,
+    otherSnakes: otherSnakes,
+    closestFood: resultFromFindClosestFood.closestFood,
+    shortestPath: resultFromFindClosestFood.shortestPath
+  })
 
   // Response data
   var data = {

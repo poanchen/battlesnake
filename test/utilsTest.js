@@ -143,7 +143,7 @@ describe('Testing the functions in utils', function() {
       assert.equal(utils.findHead(mySnake, otherSnakes)[1], 9)
     })
   })
-  describe('#findClosestFood()', function() {
+  describe('#findClosestFoodAndPath()', function() {
     it("should return the closest food around my own snake's head", function() {
       var snakeHead;
       const grid = new pf.Grid(
@@ -155,16 +155,16 @@ describe('Testing the functions in utils', function() {
       )
 
       snakeHead = [0, 15]
-      assert.equal(utils.findClosestFood(snakeHead, food, grid)[0], 0)
-      assert.equal(utils.findClosestFood(snakeHead, food, grid)[1], 19)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[0], 0)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[1], 19)
 
       snakeHead = [15, 15]
-      assert.equal(utils.findClosestFood(snakeHead, food, grid)[0], 19)
-      assert.equal(utils.findClosestFood(snakeHead, food, grid)[1], 19)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[0], 19)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[1], 19)
 
       snakeHead = [14, 0]
-      assert.equal(utils.findClosestFood(snakeHead, food, grid)[0], 19)
-      assert.equal(utils.findClosestFood(snakeHead, food, grid)[1], 0)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[0], 19)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[1], 0)
     })
   })
   describe('#getDirection()', function() {
