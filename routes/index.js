@@ -2,6 +2,7 @@ var express = require('express')
 var router  = express.Router()
 var config = require('../config.json')
 var pf = require('pathfinding')
+var utils = require('./utils')
 
 // Handle POST request to '/start'
 router.post(config.route.start, function (req, res) {
@@ -12,6 +13,8 @@ router.post(config.route.start, function (req, res) {
     color: config.snake.color,
     name: config.snake.name,
     head_url: config.snake.head_url,
+    head_type: config.snake.head_type,
+    tail_type: config.snake.tail_type,
     taunt: config.snake.taunt.start
   }
 
@@ -23,10 +26,6 @@ router.post(config.route.move, function (req, res) {
   // NOTE: Do something here to generate your move
 
   var body = req.body
-  // console.dir(body, {
-  //   depth: null,
-  //   colors: true
-  // })
   var mySnake = {
     id: body.you
   }
@@ -38,12 +37,15 @@ router.post(config.route.move, function (req, res) {
   var food = body.food
   var nextMove = 'up'
 
-  // check if there is food around and you can get to there before anyone else
-  if (true) {
+  // console.dir(utils.findHead(mySnake, otherSnakes), {
+  //   depth: null,
+  //   colors: true
+  // })
 
-  } else {
-    // otherwise, try to move and use as much space as possible
-  }
+  var closestFood = utils.findClosestFood(utils.findHead(mySnake, otherSnakes), food)
+
+  // try to get to the clostest food
+  nextMove = utils.findNextMove(mySnake, otherSnakes, closestFood)
 
   // Response data
   var data = {
