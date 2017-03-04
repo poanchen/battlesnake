@@ -1,3 +1,5 @@
+var pf = require('pathfinding')
+
 //: D
 // 1
 function findHead(mySnake, otherSnakes) {
@@ -6,11 +8,29 @@ function findHead(mySnake, otherSnakes) {
 
 //: B,D
 // 3
-function findClosestFood(snakeHead, food) {
-  // we need to use A* to find it
-  // for food in food
-    // A* each food
-  return [1, 9]
+function findClosestFood(snakeHead, food, grid) {
+  var finder = new pf.AStarFinder();
+  var originalGrid = grid.clone();
+  var path
+  var closestFood, closestFoodLength = 100000
+
+  for (var i = 0; i < food.length; i++) {
+    path = finder.findPath(
+      snakeHead[0],
+      snakeHead[1],
+      food[i][0],
+      food[i][1],
+      grid
+    );
+
+    if (path.length < closestFoodLength && path.length != 0) {
+      closestFoodLength = path.length
+      closestFood = food[i]
+    }
+    grid = originalGrid.clone()
+  }
+
+  return closestFood
 }
 
 //: D
@@ -22,14 +42,37 @@ function getDirection(from, to) {
 
 //: B
 // 2
-function initGrid(argument) {
-  // body...
-}
+function initGrid(data) {
+  // create a data.height x data.width empty array
+  // for example,
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  var grid = Array(data.height).fill(null).map(
+              () => Array(data.width).fill(null).map(
+                () => 0))
+  var x, y
 
-//: B
-// 1
-function printGrid(argument) {
-  // body...
+  // make sure each snake's coord should be 1
+  // for example,
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 1 0 0 0 1
+  // 0 0 0 1 1 0 0 1
+  // 1 1 0 1 1 0 0 0
+  // 0 1 0 0 0 0 1 1
+  // 0 0 0 0 0 0 1 1
+  for (var i = 0; i < data.snakes.length; i++) {
+    for (var j = 0; j < data.snakes[i].coords.length; j++) {
+      x = data.snakes[i].coords[j][0]
+      y = data.snakes[i].coords[j][1]
+      grid[x][y] = 1
+    }
+  }
+
+  return grid
 }
 
 //: B, D
@@ -100,6 +143,5 @@ module.exports = {
   findClosestFood: findClosestFood,
   getDirection: getDirection,
   initGrid: initGrid,
-  printGrid: printGrid,
   findNextMove: findNextMove
 }

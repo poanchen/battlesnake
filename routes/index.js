@@ -29,7 +29,6 @@ router.post(config.route.move, function (req, res) {
   var mySnake = {
     id: body.you
   }
-  var grid = new pf.Grid(body.width, body.height)
   var otherSnakes = body.snakes
   var game = {
     id: body.game_id
@@ -42,10 +41,33 @@ router.post(config.route.move, function (req, res) {
   //   colors: true
   // })
 
-  var closestFood = utils.findClosestFood(utils.findHead(mySnake, otherSnakes), food)
+  // console.log(utils.initGrid({
+  //   width: body.width,
+  //   height: body.height,
+  //   snakes: otherSnakes
+  // }))
+
+  var closestFood = utils.findClosestFood([15, 15], food,
+    new pf.Grid(
+      utils.initGrid({
+        width: body.width,
+        height: body.height,
+        snakes: otherSnakes
+      })
+    ))
+
+  // console.log(closestFood)
+
+  // var closestFood = utils.findClosestFood(utils.findHead(mySnake, otherSnakes), food)
 
   // try to get to the clostest food
-  nextMove = utils.findNextMove(mySnake, otherSnakes, closestFood)
+  // nextMove = utils.findNextMove(mySnake, otherSnakes, closestFood)
+
+  // console.log(utils.initGrid({
+  //   width: body.width,
+  //   height: body.height,
+  //   snakes: otherSnakes
+  // }))
 
   // Response data
   var data = {
