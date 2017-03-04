@@ -3,15 +3,16 @@ var pf = require('pathfinding')
 //: D
 // 1
 function findHead(mySnake, otherSnakes) {
-	return [1, 1]
+  return [1, 1]
 }
 
 //: B,D
 // 3
-function findClosestFood(snakeHead, food, grid) {
+function findClosestFoodAndPath(snakeHead, food, grid) {
   var finder = new pf.AStarFinder();
   var originalGrid = grid.clone();
   var path
+  var shortestPath
   var closestFood, closestFoodLength = 100000
 
   for (var i = 0; i < food.length; i++) {
@@ -24,20 +25,24 @@ function findClosestFood(snakeHead, food, grid) {
     );
 
     if (path.length < closestFoodLength && path.length != 0) {
+      shortestPath = path
       closestFoodLength = path.length
       closestFood = food[i]
     }
     grid = originalGrid.clone()
   }
 
-  return closestFood
+  return {
+    shortestPath: shortestPath,
+    closestFood: closestFood
+  }
 }
 
 //: D
 // 1
 function getDirection(from, to) {
   // one of: ['up','down','left','right']
-  return [1, 9]
+  return 'left'
 }
 
 //: B
@@ -77,7 +82,7 @@ function initGrid(data) {
 
 //: B, D
 //: 5
-function findNextMove(mySnake, otherSnakes, closestFood) {
+function findNextMove(data) {
   // using A* to find the shorest path to the closest food
   // the path could look something like this [ [ 1, 2 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 3, 2 ], [ 4, 2 ] ]
   // c: [5 ,5] -> [5, 6]
@@ -121,8 +126,10 @@ function findNextMove(mySnake, otherSnakes, closestFood) {
   // don't get trap
     // 
 
-
   // check if it is other snake's dangerous zone
+
+  // console.log(findHead())
+
   // if true
     // check their length
     // if we are longer than him/her
@@ -135,12 +142,12 @@ function findNextMove(mySnake, otherSnakes, closestFood) {
     // slow down once at certain length
     // go ahead
 
-  return 'right'
+  return getDirection(data.shortestPath[0], data.shortestPath[1])
 }
 
 module.exports = {
-	findHead: findHead,
-  findClosestFood: findClosestFood,
+  findHead: findHead,
+  findClosestFoodAndPath: findClosestFoodAndPath,
   getDirection: getDirection,
   initGrid: initGrid,
   findNextMove: findNextMove
