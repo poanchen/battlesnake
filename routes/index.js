@@ -34,19 +34,11 @@ router.post(config.route.move, function (req, res) {
   var food = body.food
   var nextMove = 'up'
 
-  console.log(utils.initGrid({
-      width: body.width,
-      height: body.height,
-      myHead: utils.findHead(mySnake, otherSnakes),
-      snakes: otherSnakes
-    }))
-
   var resultFromFindClosestFood = utils.findClosestFoodAndPath(utils.findHead(mySnake, otherSnakes), food,
     new pf.Grid(
       utils.initGrid({
         width: body.width,
         height: body.height,
-        myHead: utils.findHead(mySnake, otherSnakes),
         snakes: otherSnakes
       })
     ))
