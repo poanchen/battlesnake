@@ -203,11 +203,60 @@ describe('Testing the functions in utils', function() {
       var x, y
       for (var i = 0; i < data.snakes.length; i++) {
         for (var j = 0; j < data.snakes[i].coords.length; j++) {
-          x = data.snakes[i].coords[j][0]
-          y = data.snakes[i].coords[j][1]
-          grid[x][y] = 1
+          x = data.snakes[i].coords[j][1]
+          y = data.snakes[i].coords[j][0]
+          assert.equal(grid[x][y], 1)
         }
       }
+    })
+  })
+  describe('#getPossibleMove()', function() {
+    it("should only return possible move based on the position of the head", function() {
+      const mySnake = {
+        id: "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"
+      }
+      const data = {
+        mySnake: mySnake,
+        otherSnakes: otherSnakes,
+        grid: new pf.Grid(utils.initGrid({
+          width: 20,
+          height: 20,
+          snakes: otherSnakes
+        }))
+      }
+
+      // when our snake is at the middle
+      assert.equal(utils.getPossibleMove(data).length, 3)
+      assert.equal(utils.getPossibleMove(data)[0][0], 8)
+      assert.equal(utils.getPossibleMove(data)[0][1], 6)
+      assert.equal(utils.getPossibleMove(data)[1][0], 7)
+      assert.equal(utils.getPossibleMove(data)[1][1], 7)
+      assert.equal(utils.getPossibleMove(data)[2][0], 7)
+      assert.equal(utils.getPossibleMove(data)[2][1], 5)
+
+      // when our snake is at the top left side
+      data.otherSnakes[0].coords = [
+        [0, 0],
+        [0, 1],
+        [0, 2]
+      ]
+      assert.equal(utils.getPossibleMove(data).length, 1)
+      assert.equal(utils.getPossibleMove(data)[0][0], 0)
+      assert.equal(utils.getPossibleMove(data)[0][1], 1)
+
+      // when our snake is at the top bottom side
+      data.otherSnakes[0].coords = [
+        [0, 17],
+        [0, 18],
+        [0, 19]
+      ]
+      // assert.equal(utils.getPossibleMove(data), 1)
+
+      // when our snake is at the very right side
+      // when our snake is at the very top side
+      // when our snake is at the very bottom side
+
+      // to-do here
     })
   })
 })

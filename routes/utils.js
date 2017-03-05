@@ -1,4 +1,9 @@
-var pf = require('pathfinding')
+const pf = require('pathfinding')
+
+const RIGHT = 'right'
+const LEFT = 'left'
+const UP = 'up'
+const DOWN = 'down'
 
 function findHead(mySnake, otherSnakes) {
   for (var i = 0; i < otherSnakes.length; i++) {
@@ -12,8 +17,7 @@ function findHead(mySnake, otherSnakes) {
 function findClosestFoodAndPath(snakeHead, food, grid) {
   var finder = new pf.AStarFinder()
   var originalGrid = grid.clone()
-  var path
-  var shortestPath
+  var shortestPath, path
   var closestFood, closestFoodLength = 100000
 
   for (var i = 0; i < food.length; i++) {
@@ -44,13 +48,13 @@ function getDirection(from, to) {
   var y = to[1] - from[1]
 
   if (x == 1) {
-    return 'right'
+    return RIGHT
   } else if (x == -1) {
-    return 'left'
+    return LEFT
   } else if (y == -1) {
-    return 'up'
+    return UP
   } else if (y == 1) {
-    return 'down'
+    return DOWN
   }
 }
 
@@ -87,6 +91,61 @@ function initGrid(data) {
   return grid
 }
 
+function getPossibleMove(data) {
+  var possibleMoves = []
+  var myHead = findHead(data.mySnake, data.otherSnakes)
+  
+  if (
+    myHead[1] + 1 >= 0 &&
+    myHead[1] + 1 < data.grid.height &&
+    data.grid.nodes[myHead[1] + 1][myHead[0]].walkable
+  ) {
+    // check if down is possible
+    // console.log("down is possible")
+    // console.log("x", myHead[1] + 1)
+    // console.log("y", myHead[0])
+    possibleMoves.push([myHead[1] + 1, myHead[0]])
+  }
+
+  if (
+    myHead[0] + 1 >= 0 &&
+    myHead[0] + 1 < data.grid.width &&
+    data.grid.nodes[myHead[1]][myHead[0] + 1].walkable
+  ) {
+    // check if right is possible
+    // console.log("right is possible")
+    // console.log("x", myHead[1])
+    // console.log("y", myHead[0] + 1)
+    possibleMoves.push([myHead[1], myHead[0] + 1])
+  }
+
+  if (
+    myHead[1] - 1 >= 0 &&
+    myHead[1] - 1 < data.grid.height &&
+    data.grid.nodes[myHead[1] - 1][myHead[0]].walkable
+  ) {
+    // check if up is possible
+    // console.log("up is possible")
+    // console.log("x", myHead[1] - 1)
+    // console.log("y", myHead[0])
+    possibleMoves.push([myHead[1] - 1, myHead[0]])
+  }
+
+  if (
+    myHead[0] - 1 >= 0 &&
+    myHead[0] - 1 < data.grid.width &&
+    data.grid.nodes[myHead[1]][myHead[0] - 1].walkable
+  ) {
+    // check for left
+    // console.log("left is possible")
+    // console.log("x", myHead[1])
+    // console.log("y", myHead[0] - 1)
+    possibleMoves.push([myHead[1], myHead[0] - 1])
+  }
+
+  return possibleMoves
+}
+
 function findNextMove(data) {
   // [1, 1, 1, 1, 1, 1, 1, 1],
   // [1, 0, 0, 0, 0, 0, 0, 1],
@@ -98,35 +157,28 @@ function findNextMove(data) {
   // [1, 0, H, 0, 0, 0, 0, 1],
   // [1, 1, 1, 1, 1, 1, 1, 1],
 
-  // if attack mode
-  // try to trap someone
-    // force them to do a longest path alg
-  // try to head on someone
-    // get to dangerous zone
-    // predict the highest possiblibty for other snake's next move
+  // slow down once at certain length
 
-  // don't get trap
-    // 
+  // get all the possible moves first and eliminate one that is too dangerous
+  // getPossibleMove(data)
 
-  // check if it is other snake's dangerous zone
+  // check if it is someone else dangerous zone
+    // if true
+      // if we are not longer than him/her
+        // remove that path since it is not safe
 
-  // console.log(findHead())
+  // check if we only have two possible moves left
+  // use flood fill algorithm
+    // check if one move has greater count than the other one
+      // if true
+        // remove that path since it is not safe
 
-  // if true
-    // check their length
-    // if we are longer than him/her
-      // go ahead
-    // if we are not longer than him/her
-      // give up the food when other snake is closer **
-      // ?
-  // else
-    // don't trap yourself *****
-    // slow down once at certain length
-    // go ahead
-  // there is either no food or not possible to get to any food at this moment
-  if (data.closestFood === undefined || data.shortestPath === undefined) {
-    console.log(data)
-  }
+  // check if there is closest food
+    // if true
+      // if health is greater than 60
+        // remove that path since it is not safe
+      // else
+        // make food priority cuz we need to eat
 
   return getDirection(data.shortestPath[0], data.shortestPath[1])
 }
@@ -136,5 +188,6 @@ module.exports = {
   findClosestFoodAndPath: findClosestFoodAndPath,
   getDirection: getDirection,
   initGrid: initGrid,
+  getPossibleMove: getPossibleMove,
   findNextMove: findNextMove
 }
