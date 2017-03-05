@@ -104,7 +104,7 @@ function getPossibleMove(data) {
     // console.log("down is possible")
     // console.log("x", myHead[1] + 1)
     // console.log("y", myHead[0])
-    possibleMoves.push([myHead[1] + 1, myHead[0]])
+    possibleMoves.push([myHead[0], myHead[1] + 1])
   }
 
   if (
@@ -116,7 +116,7 @@ function getPossibleMove(data) {
     // console.log("right is possible")
     // console.log("x", myHead[1])
     // console.log("y", myHead[0] + 1)
-    possibleMoves.push([myHead[1], myHead[0] + 1])
+    possibleMoves.push([myHead[0] + 1, myHead[1]])
   }
 
   if (
@@ -128,7 +128,7 @@ function getPossibleMove(data) {
     // console.log("up is possible")
     // console.log("x", myHead[1] - 1)
     // console.log("y", myHead[0])
-    possibleMoves.push([myHead[1] - 1, myHead[0]])
+    possibleMoves.push([myHead[0], myHead[1] - 1])
   }
 
   if (
@@ -140,7 +140,7 @@ function getPossibleMove(data) {
     // console.log("left is possible")
     // console.log("x", myHead[1])
     // console.log("y", myHead[0] - 1)
-    possibleMoves.push([myHead[1], myHead[0] - 1])
+    possibleMoves.push([myHead[0] - 1, myHead[1]])
   }
 
   return possibleMoves
@@ -179,6 +179,9 @@ function findNextMove(data) {
         // remove that path since it is not safe
       // else
         // make food priority cuz we need to eat
+  if (data.closestFood === undefined || data.shortestPath === undefined) {
+    return getDirection(data.otherSnakes[0].coords[0], getPossibleMove(data)[0])
+  }
 
   return getDirection(data.shortestPath[0], data.shortestPath[1])
 }
