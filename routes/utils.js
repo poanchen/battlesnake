@@ -1,22 +1,17 @@
 var pf = require('pathfinding')
 
-//: D
-// 1
 function findHead(mySnake, otherSnakes) {
-
-  for(var i=0;i<otherSnakes.length;i++){
-      if(otherSnakes[i].id==mySnake.id){
+  for (var i = 0; i < otherSnakes.length; i++) {
+      if (otherSnakes[i].id == mySnake.id) {
         return otherSnakes[i].coords[0]
       }
   }
   return []
 }
 
-//: B,D
-// 3
 function findClosestFoodAndPath(snakeHead, food, grid) {
-  var finder = new pf.AStarFinder();
-  var originalGrid = grid.clone();
+  var finder = new pf.AStarFinder()
+  var originalGrid = grid.clone()
   var path
   var shortestPath
   var closestFood, closestFoodLength = 100000
@@ -44,29 +39,21 @@ function findClosestFoodAndPath(snakeHead, food, grid) {
   }
 }
 
-//: D
-// 1
 function getDirection(from, to) {
-  // one of: ['up','down','left','right']
-   var dirx = to[0] - from[0]
-    var diry = to[1] - from[1]
+  var x = to[0] - from[0]
+  var y = to[1] - from[1]
 
-    if (dirx == 1){
-        return 'right'
-      }
-    else if( dirx == -1){
-        return 'left'
-      }
-    else if (diry == -1){
-        return 'up'
-    }
-    else if (diry == 1){
-        return 'down'
-      }
+  if (x == 1) {
+    return 'right'
+  } else if (x == -1) {
+    return 'left'
+  } else if (y == -1) {
+    return 'up'
+  } else if (y == 1) {
+    return 'down'
+  }
 }
 
-//: B
-// 2
 function initGrid(data) {
   // create a data.height x data.width empty array
   // for example,
@@ -100,32 +87,7 @@ function initGrid(data) {
   return grid
 }
 
-//: B, D
-//: 5
 function findNextMove(data) {
-  // using A* to find the shorest path to the closest food
-  // the path could look something like this [ [ 1, 2 ], [ 1, 1 ], [ 2, 1 ], [ 3, 1 ], [ 3, 2 ], [ 4, 2 ] ]
-  // c: [5 ,5] -> [5, 6]
-  // up
-  // c: [5 ,5] -> [6, 5]
-  // right
-  // c: [5 ,5] -> [5, 4]
-  // down
-  // c: [5 ,5] -> [4, 5]
-  // left
-
-  //    X
-  //   XSXOBBB
-  //    B
-  //    B
-  //    B
-  //    B
-  // S is our head
-  // B is our body
-  // X is the only possible move
-  // O is other snake
-
-  // 6x7
   // [1, 1, 1, 1, 1, 1, 1, 1],
   // [1, 0, 0, 0, 0, 0, 0, 1],
   // [1, 0, 0, 0, 0, 0, 0, 1],
@@ -161,6 +123,10 @@ function findNextMove(data) {
     // don't trap yourself *****
     // slow down once at certain length
     // go ahead
+  // there is either no food or not possible to get to any food at this moment
+  if (data.closestFood === undefined || data.shortestPath === undefined) {
+    console.log(data)
+  }
 
   return getDirection(data.shortestPath[0], data.shortestPath[1])
 }
