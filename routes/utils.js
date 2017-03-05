@@ -94,6 +94,42 @@ function initGrid(data) {
       x = data.snakes[i].coords[j][1]
       y = data.snakes[i].coords[j][0]
       grid[x][y] = 1
+
+      if (data.myHead[0] == x && data.myHead[1] == y) {
+        continue;
+      } else {
+        if (
+          x < data.width &&
+          y - 1 < data.height &&
+          x >= 0 &&
+          y - 1 >= 0) {
+          grid[x][y-1] = 1
+        }
+
+        if (
+          x < data.width &&
+          y + 1 < data.height &&
+          x >= 0 &&
+          y + 1 >= 0) {
+          grid[x][y+1] = 1
+        }
+
+        if (
+          x + 1 < data.width &&
+          y < data.height &&
+          x + 1 >= 0 &&
+          y >= 0) {
+          grid[x+1][y] = 1
+        }
+
+        if (
+          x - 1 < data.width &&
+          y < data.height &&
+          x - 1 >= 0 &&
+          y >= 0) {
+          grid[x-1][y] = 1
+        }
+      }
     }
   }
 

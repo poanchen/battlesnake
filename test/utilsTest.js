@@ -203,8 +203,8 @@ describe('Testing the functions in utils', function() {
       var x, y
       for (var i = 0; i < data.snakes.length; i++) {
         for (var j = 0; j < data.snakes[i].coords.length; j++) {
-          x = data.snakes[i].coords[j][0]
-          y = data.snakes[i].coords[j][1]
+          x = data.snakes[i].coords[j][1]
+          y = data.snakes[i].coords[j][0]
           grid[x][y] = 1
         }
       }
