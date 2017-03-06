@@ -202,6 +202,7 @@ function findNextMove(data) {
   }
 
   // check if we only have two possible moves left
+  console.log
   // use flood fill algorithm
     // check if one move has greater count than the other one
       // if true
@@ -214,10 +215,9 @@ function findNextMove(data) {
       return getDirection(data.shortestPath[0], data.shortestPath[1])
     }
     // instead of eating right now, I think we can wait for a bit more
-    return getDirection(data.otherSnakes[0].coords[0], possibleMoves[0])
   }
 
-  return getDirection(data.shortestPath[0], data.shortestPath[1])
+  return getDirection(data.otherSnakes[0].coords[0], possibleMoves[0])
 }
 
 module.exports = {
