@@ -15,7 +15,7 @@ function findHead(mySnake, otherSnakes) {
 }
 
 function findClosestFoodAndPath(snakeHead, food, grid) {
-  var finder = new pf.AStarFinder()
+  const finder = new pf.AStarFinder()
   var originalGrid = grid.clone()
   var shortestPath, path
   var closestFood, closestFoodLength = 100000
@@ -93,7 +93,7 @@ function initGrid(data) {
 
 function getPossibleMove(data) {
   var possibleMoves = []
-  var myHead = findHead(data.mySnake, data.otherSnakes)
+  const myHead = findHead(data.mySnake, data.otherSnakes)
   
   if (
     myHead[1] + 1 >= 0 &&
@@ -160,7 +160,9 @@ function findNextMove(data) {
   // slow down once at certain length
 
   // get all the possible moves first and eliminate one that is too dangerous
-  // getPossibleMove(data)
+  var possibleMoves = getPossibleMove(data)
+
+  console.log(possibleMoves)
 
   // check if it is someone else dangerous zone
     // if true

@@ -215,48 +215,210 @@ describe('Testing the functions in utils', function() {
       const mySnake = {
         id: "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"
       }
-      const data = {
+      var snakes = otherSnakes
+      var grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      var data = {
         mySnake: mySnake,
-        otherSnakes: otherSnakes,
-        grid: new pf.Grid(utils.initGrid({
-          width: 20,
-          height: 20,
-          snakes: otherSnakes
-        }))
+        otherSnakes: snakes,
+        grid: grid
       }
 
       // when our snake is at the middle
       assert.equal(utils.getPossibleMove(data).length, 3)
-      assert.equal(utils.getPossibleMove(data)[0][0], 8)
-      assert.equal(utils.getPossibleMove(data)[0][1], 6)
+      assert.equal(utils.getPossibleMove(data)[0][0], 6)
+      assert.equal(utils.getPossibleMove(data)[0][1], 8)
       assert.equal(utils.getPossibleMove(data)[1][0], 7)
       assert.equal(utils.getPossibleMove(data)[1][1], 7)
-      assert.equal(utils.getPossibleMove(data)[2][0], 7)
-      assert.equal(utils.getPossibleMove(data)[2][1], 5)
+      assert.equal(utils.getPossibleMove(data)[2][0], 5)
+      assert.equal(utils.getPossibleMove(data)[2][1], 7)
 
       // when our snake is at the top left side
-      data.otherSnakes[0].coords = [
+      snakes[0].coords = [
         [0, 0],
         [0, 1],
         [0, 2]
       ]
-      assert.equal(utils.getPossibleMove(data).length, 1)
-      assert.equal(utils.getPossibleMove(data)[0][0], 0)
-      assert.equal(utils.getPossibleMove(data)[0][1], 1)
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
 
-      // when our snake is at the top bottom side
-      data.otherSnakes[0].coords = [
+      assert.equal(utils.getPossibleMove(data).length, 1)
+      assert.equal(utils.getPossibleMove(data)[0][0], 1)
+      assert.equal(utils.getPossibleMove(data)[0][1], 0)
+
+      // when our snake is at the bottom left side
+      snakes[0].coords = [
         [0, 17],
         [0, 18],
         [0, 19]
       ]
-      // assert.equal(utils.getPossibleMove(data), 1)
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
 
-      // when our snake is at the very right side
-      // when our snake is at the very top side
-      // when our snake is at the very bottom side
+      assert.equal(utils.getPossibleMove(data).length, 2)
+      assert.equal(utils.getPossibleMove(data)[0][0], 1)
+      assert.equal(utils.getPossibleMove(data)[0][1], 17)
+      assert.equal(utils.getPossibleMove(data)[1][0], 0)
+      assert.equal(utils.getPossibleMove(data)[1][1], 16)
 
-      // to-do here
+      // when our snake is at the top right side
+      snakes[0].coords = [
+        [19, 17],
+        [19, 18],
+        [19, 19]
+      ]
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
+
+      assert.equal(utils.getPossibleMove(data).length, 2)
+      assert.equal(utils.getPossibleMove(data)[0][0], 19)
+      assert.equal(utils.getPossibleMove(data)[0][1], 16)
+      assert.equal(utils.getPossibleMove(data)[1][0], 18)
+      assert.equal(utils.getPossibleMove(data)[1][1], 17)
+
+      // when our snake is at the bottom right side
+      snakes[0].coords = [
+        [19, 17],
+        [19, 18],
+        [19, 19]
+      ]
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
+
+      assert.equal(utils.getPossibleMove(data).length, 2)
+      assert.equal(utils.getPossibleMove(data)[0][0], 19)
+      assert.equal(utils.getPossibleMove(data)[0][1], 16)
+      assert.equal(utils.getPossibleMove(data)[1][0], 18)
+      assert.equal(utils.getPossibleMove(data)[1][1], 17)
+
+      // when our snake is at the middle left side
+      snakes[0].coords = [
+        [19, 17],
+        [19, 18],
+        [19, 19]
+      ]
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
+
+      assert.equal(utils.getPossibleMove(data).length, 2)
+      assert.equal(utils.getPossibleMove(data)[0][0], 19)
+      assert.equal(utils.getPossibleMove(data)[0][1], 16)
+      assert.equal(utils.getPossibleMove(data)[1][0], 18)
+      assert.equal(utils.getPossibleMove(data)[1][1], 17)
+
+      // when our snake is at the middle right side
+      snakes[0].coords = [
+        [19, 10],
+        [19, 11],
+        [19, 12]
+      ]
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
+
+      assert.equal(utils.getPossibleMove(data).length, 2)
+      assert.equal(utils.getPossibleMove(data)[0][0], 19)
+      assert.equal(utils.getPossibleMove(data)[0][1], 9)
+      assert.equal(utils.getPossibleMove(data)[1][0], 18)
+      assert.equal(utils.getPossibleMove(data)[1][1], 10)
+
+      // when our snake is at the top middle side
+      snakes[0].coords = [
+        [10, 0],
+        [10, 1],
+        [10, 2]
+      ]
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
+
+      assert.equal(utils.getPossibleMove(data).length, 2)
+      assert.equal(utils.getPossibleMove(data)[0][0], 11)
+      assert.equal(utils.getPossibleMove(data)[0][1], 0)
+      assert.equal(utils.getPossibleMove(data)[1][0], 9)
+      assert.equal(utils.getPossibleMove(data)[1][1], 0)
+
+      // when our snake is at the bottom middle side
+      snakes[0].coords = [
+        [10, 17],
+        [10, 18],
+        [10, 19]
+      ]
+      grid = new pf.Grid(utils.initGrid({
+        width: 20,
+        height: 20,
+        snakes: snakes
+      }))
+      data = {
+        mySnake: mySnake,
+        otherSnakes: snakes,
+        grid: grid
+      }
+
+      assert.equal(utils.getPossibleMove(data).length, 3)
+      assert.equal(utils.getPossibleMove(data)[0][0], 11)
+      assert.equal(utils.getPossibleMove(data)[0][1], 17)
+      assert.equal(utils.getPossibleMove(data)[1][0], 10)
+      assert.equal(utils.getPossibleMove(data)[1][1], 16)
+      assert.equal(utils.getPossibleMove(data)[2][0], 9)
+      assert.equal(utils.getPossibleMove(data)[2][1], 17)
     })
   })
 })
