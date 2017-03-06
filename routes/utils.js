@@ -175,6 +175,82 @@ function checkIfItIsOthersDangerousZone(data, pt) {
   }
 }
 
+function useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves) {
+  var mapData = initGrid({
+    width: data.grid.width,
+    height: data.grid.height,
+    snakes: data.otherSnakes
+  }), countForFirstMove, countForSecondMove
+  
+  floodFill(mapData, possibleMoves[0][1], possibleMoves[0][0], 0, 2)
+  countForFirstMove = countSafeSpot(mapData, 2)
+
+  mapData = initGrid({
+    width: data.grid.width,
+    height: data.grid.height,
+    snakes: data.otherSnakes
+  })
+
+  floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
+  countForSecondMove = countSafeSpot(mapData, 2)
+
+  return [countForFirstMove, countForSecondMove]
+}
+
+// author name: MrPolywhirl
+// author url: https://jsfiddle.net/user/MrPolywhirl/
+// source code url: https://jsfiddle.net/MrPolywhirl/eWxNE/
+function floodFill(mapData, x, y, oldVal, newVal) {
+  const mapWidth = mapData.length,
+    mapHeight = mapData[0].length
+    
+  if (oldVal == null) {
+    oldVal = mapData[x][y]
+  }
+  
+  if (mapData[x][y] !== oldVal) {
+    return true
+  }
+
+  mapData[x][y] = newVal
+
+  if (x > 0) {
+    // left
+    floodFill(mapData, x-1, y, oldVal, newVal)
+  }
+
+  if (y > 0) {
+    // up
+    floodFill(mapData, x, y-1, oldVal, newVal)
+  }
+  
+  if (x < mapWidth-1) {
+    // right
+    floodFill(mapData, x+1, y, oldVal, newVal)
+  }
+
+  if (y < mapHeight-1) {
+    // down
+    floodFill(mapData, x, y+1, oldVal, newVal)
+  }
+}
+
+function countSafeSpot(mapData, newVal) {
+  var sum = 0
+  const mapWidth = mapData.length,
+    mapHeight = mapData[0].length
+
+  for (var i = 0; i < mapHeight; i++) {
+    for (var j = 0; j < mapWidth; j++) {
+      if (mapData[i][j] == newVal) {
+        sum++
+      }
+    }
+  }
+
+  return sum
+}
+
 function findNextMove(data) {
   // For example,
   // [1, 1, 1, 1, 1, 1, 1, 1],
@@ -203,10 +279,15 @@ function findNextMove(data) {
 
   // check if we only have two possible moves left
   if (possibleMoves.length == 2) {
-    // use flood fill algorithm
+    var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
     // check if one move has greater count than the other one
-      // if true
-          // remove that path since it is not safe
+    if (ptForEachMoves[0] < ptForEachMoves[1]) {
+      // remove that path since it is not safe
+      possibleMoves.splice(0, 1)
+    } else {
+      // remove that path since it is not safe
+      possibleMoves.splice(1, 1)
+    }
   }
 
   // check if there is closest food and path
@@ -227,6 +308,7 @@ module.exports = {
   getDirection: getDirection,
   initGrid: initGrid,
   checkIfItIsOthersDangerousZone: checkIfItIsOthersDangerousZone,
+  useFloodFillAlgToDecideWhichWayIsBetter: useFloodFillAlgToDecideWhichWayIsBetter,
   getPossibleMove: getPossibleMove,
   findNextMove: findNextMove
 }
