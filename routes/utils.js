@@ -5,7 +5,7 @@ const LEFT = 'left'
 const UP = 'up'
 const DOWN = 'down'
 
-const HUNGRY_AT_HEALTH_OF = 80
+const HUNGRY_AT_HEALTH_OF = 100
 
 function findHead(mySnake, otherSnakes) {
   for (var i = 0; i < otherSnakes.length; i++) {
