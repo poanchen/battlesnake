@@ -432,7 +432,16 @@ function findNextMove(data) {
   if (data.closestFood !== undefined && data.shortestPath !== undefined) {
     if (data.otherSnakes[0].health_points < HUNGRY_AT_HEALTH_OF) {
       // I think we are hungry and we should go ahead and eat some food
-      return getDirection(data.shortestPath[0], data.shortestPath[1])
+      // but before we go ahead, let's see if it is safe to do so
+      for (var i = 0; i < possibleMoves.length; i++) {
+        if (possibleMoves[i][0] == data.shortestPath[0] &&
+          possibleMoves[i][1] == data.shortestPath[1]) {
+          // I think it is safe to eat
+          return getDirection(data.shortestPath[0], data.shortestPath[1])
+        }
+        // seems like it will be too dangerous to eat the food
+        // let's not do that
+      }    
     }
     // instead of eating right now, I think we can wait for a bit more
   }
