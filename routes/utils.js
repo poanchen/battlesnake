@@ -5,6 +5,8 @@ const LEFT = 'left'
 const UP = 'up'
 const DOWN = 'down'
 
+const HUNGRY_AT_HEALTH_OF = 60
+
 function findHead(mySnake, otherSnakes) {
   for (var i = 0; i < otherSnakes.length; i++) {
       if (otherSnakes[i].id == mySnake.id) {
@@ -146,7 +148,35 @@ function getPossibleMove(data) {
   return possibleMoves
 }
 
+function checkIfItIsOthersDangerousZone(data, pt) {
+  var possibleMoves
+  var tempSnakeLength
+  var copiedOfData = data
+  var lengthOfOtherSnake = 0
+  var itIsOthersDangerousZone = false
+
+  for (var i = 0; i < copiedOfData.otherSnakes.length; i++) {
+    copiedOfData.mySnake.id = copiedOfData.otherSnakes[i].id
+    possibleMoves = getPossibleMove(copiedOfData)
+    for (var j = 0; j < possibleMoves.length; j++) {
+      if (possibleMoves[j][0] == pt[0] && possibleMoves[j][1] == pt[1]) {
+        itIsOthersDangerousZone = true
+        tempSnakeLength = copiedOfData.otherSnakes[i].coords.length
+        if (tempSnakeLength > lengthOfOtherSnake) {
+          lengthOfOtherSnake = tempSnakeLength
+        }
+      }
+    }
+  }
+
+  return {
+    itIsOthersDangerousZone: itIsOthersDangerousZone,
+    lengthOfOtherSnake: lengthOfOtherSnake
+  }
+}
+
 function findNextMove(data) {
+  // For example,
   // [1, 1, 1, 1, 1, 1, 1, 1],
   // [1, 0, 0, 0, 0, 0, 0, 1],
   // [1, 0, 0, 0, 0, 0, 0, 1],
@@ -157,17 +187,19 @@ function findNextMove(data) {
   // [1, 0, H, 0, 0, 0, 0, 1],
   // [1, 1, 1, 1, 1, 1, 1, 1],
 
-  // slow down once at certain length
-
-  // get all the possible moves first and eliminate one that is too dangerous
+  // get all the possible moves first
   var possibleMoves = getPossibleMove(data)
 
-  console.log(possibleMoves)
-
   // check if it is someone else dangerous zone
-    // if true
-      // if we are not longer than him/her
-        // remove that path since it is not safe
+  for (var i = 0; i < possibleMoves.length; i++) {
+    var isItDangerousResult = checkIfItIsOthersDangerousZone(data, possibleMoves[i])
+    if (isItDangerousResult.itIsOthersDangerousZone &&
+      isItDangerousResult.lengthOfOtherSnake > data.otherSnakes[0].coords.length) {
+      // it is indeed dangerous because their length is longer than my snake
+      // remove that move since it is not safe
+      possibleMoves.splice(i, 1)
+    }
+  }
 
   // check if we only have two possible moves left
   // use flood fill algorithm
@@ -175,14 +207,14 @@ function findNextMove(data) {
       // if true
         // remove that path since it is not safe
 
-  // check if there is closest food
-    // if true
-      // if health is greater than 60
-        // remove that path since it is not safe
-      // else
-        // make food priority cuz we need to eat
-  if (data.closestFood === undefined || data.shortestPath === undefined) {
-    return getDirection(data.otherSnakes[0].coords[0], getPossibleMove(data)[0])
+  // check if there is closest food and path
+  if (data.closestFood !== undefined && data.shortestPath !== undefined) {
+    if (data.otherSnakes[0].health_points < HUNGRY_AT_HEALTH_OF) {
+      // I think we are hungry and we should go ahead and eat some food
+      return getDirection(data.shortestPath[0], data.shortestPath[1])
+    }
+    // instead of eating right now, I think we can wait for a bit more
+    return getDirection(data.otherSnakes[0].coords[0], possibleMoves[0])
   }
 
   return getDirection(data.shortestPath[0], data.shortestPath[1])
@@ -193,6 +225,7 @@ module.exports = {
   findClosestFoodAndPath: findClosestFoodAndPath,
   getDirection: getDirection,
   initGrid: initGrid,
+  checkIfItIsOthersDangerousZone: checkIfItIsOthersDangerousZone,
   getPossibleMove: getPossibleMove,
   findNextMove: findNextMove
 }
