@@ -202,11 +202,12 @@ function findNextMove(data) {
   }
 
   // check if we only have two possible moves left
-  console.log
-  // use flood fill algorithm
+  if (possibleMoves.length == 2) {
+    // use flood fill algorithm
     // check if one move has greater count than the other one
       // if true
-        // remove that path since it is not safe
+          // remove that path since it is not safe
+  }
 
   // check if there is closest food and path
   if (data.closestFood !== undefined && data.shortestPath !== undefined) {
