@@ -436,7 +436,7 @@ function findNextMove(data) {
     if (ptForEachMoves[0] < ptForEachMoves[1]) {
       // remove that path since it is not safe
       possibleMoves.splice(0, 1)
-    } else {
+    } else if (ptForEachMoves[0] > ptForEachMoves[1]) {
       // remove that path since it is not safe
       possibleMoves.splice(1, 1)
     }
