@@ -442,8 +442,8 @@ function findNextMove(data) {
       // but before we go ahead, let's see if it is safe to do so
       for (var i = 0; i < possibleMoves.length; i++) {
         console.log("data.shortestPath" + data.shortestPath)
-        if (possibleMoves[i][0] == data.shortestPath[0] &&
-          possibleMoves[i][1] == data.shortestPath[1]) {
+        if (possibleMoves[i][0] == data.shortestPath[1][0] &&
+          possibleMoves[i][1] == data.shortestPath[1][1]) {
           // I think it is safe to eat
           console.log("The move: " + possibleMoves[i] + "is safe for eating.")
           return getDirection(data.shortestPath[0], data.shortestPath[1])
