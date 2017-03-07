@@ -405,7 +405,7 @@ function findNextMove(data) {
 
   // get all the possible moves first
   var possibleMoves = getPossibleMove(data)
-  var copiedOfPossibleMoves = Object.assign({}, possibleMoves)
+  var copiedOfPossibleMoves = possibleMoves
 
   console.log("possible moves: " + possibleMoves)
   console.log("copiedOfPossibleMoves: " + copiedOfPossibleMoves)
