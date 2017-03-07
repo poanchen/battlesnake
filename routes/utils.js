@@ -441,6 +441,8 @@ function findNextMove(data) {
     }
   }
 
+  console.log(possibleMoves)
+
   // check if there is closest food and path
   if (data.closestFood !== undefined && data.shortestPath !== undefined) {
     if (data.otherSnakes[0].health_points < HUNGRY_AT_HEALTH_OF) {
