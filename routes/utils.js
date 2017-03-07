@@ -404,6 +404,8 @@ function findNextMove(data) {
   // get all the possible moves first
   var possibleMoves = getPossibleMove(data)
 
+  console.log("possible moves: " + possibleMoves)
+
   // check if it is someone else dangerous zone
   for (var i = 0; i < possibleMoves.length; i++) {
     var isItDangerousResult = checkIfItIsOthersDangerousZone(data, possibleMoves[i])
@@ -412,6 +414,9 @@ function findNextMove(data) {
       // it is indeed dangerous because their length is longer than my snake
       // remove that move since it is not safe
       possibleMoves.splice(i, 1)
+      console.log("The move: " + possibleMoves[i] + "is dangerous!!!!!!!!!!")
+    } else {
+      console.log("The move: " + possibleMoves[i] + "is safe.")
     }
   }
 
@@ -437,14 +442,22 @@ function findNextMove(data) {
         if (possibleMoves[i][0] == data.shortestPath[0] &&
           possibleMoves[i][1] == data.shortestPath[1]) {
           // I think it is safe to eat
+          console.log("The move: " + possibleMoves[i] + "is safe for eating.")
           return getDirection(data.shortestPath[0], data.shortestPath[1])
         }
         // seems like it will be too dangerous to eat the food
         // let's not do that
+        console.log("The move: " + possibleMoves[i] + "is too dangerous, lets eat later.")
       }    
+    } else {
+      // instead of eating right now, I think we can wait for a bit more
+      console.log("we are not hungry " + data.otherSnakes[0].health_points + " for now")
     }
-    // instead of eating right now, I think we can wait for a bit more
+  } else {
+    console.log("No route to food has been found")
   }
+
+  console.log("possibleMoves:" + possibleMoves)
 
   return getDirection(data.otherSnakes[0].coords[0], possibleMoves[0])
 }
