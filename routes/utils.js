@@ -408,6 +408,7 @@ function findNextMove(data) {
   var copiedOfPossibleMoves = Object.assign({}, possibleMoves)
 
   console.log("possible moves: " + possibleMoves)
+  console.log("copiedOfPossibleMoves: " + copiedOfPossibleMoves)
 
   // check if it is someone else dangerous zone
   for (var i = 0; i < copiedOfPossibleMoves.length; i++) {
