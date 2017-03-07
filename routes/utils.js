@@ -5,7 +5,7 @@ const LEFT = 'left'
 const UP = 'up'
 const DOWN = 'down'
 
-const HUNGRY_AT_HEALTH_OF = 100
+const HUNGRY_AT_HEALTH_OF = 80
 
 function findHead(mySnake, otherSnakes) {
   for (var i = 0; i < otherSnakes.length; i++) {
@@ -416,17 +416,17 @@ function findNextMove(data) {
   }
 
   // check if we only have two possible moves left
-  if (possibleMoves.length == 2) {
-    var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
-    // check if one move has greater count than the other one
-    if (ptForEachMoves[0] < ptForEachMoves[1]) {
-      // remove that path since it is not safe
-      possibleMoves.splice(0, 1)
-    } else {
-      // remove that path since it is not safe
-      possibleMoves.splice(1, 1)
-    }
-  }
+  // if (possibleMoves.length == 2) {
+  //   var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
+  //   // check if one move has greater count than the other one
+  //   if (ptForEachMoves[0] < ptForEachMoves[1]) {
+  //     // remove that path since it is not safe
+  //     possibleMoves.splice(0, 1)
+  //   } else {
+  //     // remove that path since it is not safe
+  //     possibleMoves.splice(1, 1)
+  //   }
+  // }
 
   // check if there is closest food and path
   if (data.closestFood !== undefined && data.shortestPath !== undefined) {
