@@ -405,23 +405,26 @@ function findNextMove(data) {
 
   // get all the possible moves first
   var possibleMoves = getPossibleMove(data)
+  var copiedOfPossibleMoves = Object.assign({}, possibleMoves)
 
   console.log("possible moves: " + possibleMoves)
 
   // check if it is someone else dangerous zone
-  for (var i = 0; i < possibleMoves.length; i++) {
-    var isItDangerousResult = checkIfItIsOthersDangerousZone(data, possibleMoves[i])
+  for (var i = 0; i < copiedOfPossibleMoves.length; i++) {
+    var isItDangerousResult = checkIfItIsOthersDangerousZone(data, copiedOfPossibleMoves[i])
     if (isItDangerousResult.itIsOthersDangerousZone &&
       isItDangerousResult.lengthOfOtherSnake > data.otherSnakes[0].coords.length) {
       // it is indeed dangerous because their length is longer than my snake
       // remove that move since it is not safe
       possibleMoves.splice(i, 1)
       console.log("i: " + i)
-      console.log("The move: " + possibleMoves[i] + "is dangerous!!!!!!!!!!")
+      console.log("The move: " + copiedOfPossibleMoves[i] + "is dangerous!!!!!!!!!!")
     } else {
-      console.log("The move: " + possibleMoves[i] + "is safe.")
+      console.log("The move: " + copiedOfPossibleMoves[i] + "is safe.")
     }
   }
+
+  console.log("after delete" + possibleMoves)
 
   // check if we only have two possible moves left
   // if (possibleMoves.length == 2) {
