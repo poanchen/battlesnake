@@ -439,6 +439,7 @@ function findNextMove(data) {
       // I think we are hungry and we should go ahead and eat some food
       // but before we go ahead, let's see if it is safe to do so
       for (var i = 0; i < possibleMoves.length; i++) {
+        console.log("data.shortestPath" + data.shortestPath)
         if (possibleMoves[i][0] == data.shortestPath[0] &&
           possibleMoves[i][1] == data.shortestPath[1]) {
           // I think it is safe to eat
