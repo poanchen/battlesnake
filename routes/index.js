@@ -34,11 +34,11 @@ router.post(config.route.move, function (req, res) {
   var resultFromFindClosestFood = utils.findClosestFoodAndPath(
     utils.findHead(mySnake, otherSnakes), food, grid)
 
-  // console.log(utils.initGrid({
-  //   width: body.width,
-  //   height: body.height,
-  //   snakes: otherSnakes
-  // }))
+  console.log(utils.initGrid({
+    width: body.width,
+    height: body.height,
+    snakes: otherSnakes
+  }))
 
   nextMove = utils.findNextMove({
     grid: grid,
