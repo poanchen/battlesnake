@@ -416,6 +416,7 @@ function findNextMove(data) {
       // it is indeed dangerous because their length is longer than my snake
       // remove that move since it is not safe
       possibleMoves.splice(i, 1)
+      console.log("i: " + i)
       console.log("The move: " + possibleMoves[i] + "is dangerous!!!!!!!!!!")
     } else {
       console.log("The move: " + possibleMoves[i] + "is safe.")
