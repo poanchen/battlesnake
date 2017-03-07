@@ -174,7 +174,7 @@ function checkIfItIsOthersDangerousZone(data, pt) {
     copiedOfData.mySnake.id = copiedOfData.otherSnakes[i].id
     possibleMoves = getPossibleMove(copiedOfData)
     for (var j = 0; j < possibleMoves.length; j++) {
-      if (possibleMoves[j][0] == pt[0] && possibleMoves[j][1] == pt[1]) {
+      if (possibleMoves[j][0] == pt[1] && possibleMoves[j][1] == pt[0]) {
         itIsOthersDangerousZone = true
         tempSnakeLength = copiedOfData.otherSnakes[i].coords.length
         if (tempSnakeLength > lengthOfOtherSnake) {
