@@ -401,6 +401,8 @@ function findNextMove(data) {
   // [1, 0, H, 0, 0, 0, 0, 1],
   // [1, 1, 1, 1, 1, 1, 1, 1],
 
+  console.log(data)
+
   // get all the possible moves first
   var possibleMoves = getPossibleMove(data)
 
