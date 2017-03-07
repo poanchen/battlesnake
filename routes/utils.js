@@ -197,13 +197,13 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves) {
     snakes: data.otherSnakes
   }), countForFirstMove, countForSecondMove
   // find the closest enemy
-  var closestEnemyHead = findClosestFoodAndPath(
-                            data.otherSnakes[0].coords[0],
-                            getAllEnemiesHead(data.mySnake, data.otherSnakes),
-                            data.grid)
+  // var closestEnemyHead = findClosestFoodAndPath(
+  //                           data.otherSnakes[0].coords[0],
+  //                           getAllEnemiesHead(data.mySnake, data.otherSnakes),
+  //                           data.grid)
 
   // try to see if they could trap us
-  if (closestEnemyHead.closestFood === undefined && closestEnemyHead.shortestPath === undefined) {
+  // if (closestEnemyHead.closestFood === undefined && closestEnemyHead.shortestPath === undefined) {
     // it seems like we are already trap?
     // try to find the best way to go
     floodFill(mapData, possibleMoves[0][1], possibleMoves[0][0], 0, 2)
@@ -217,119 +217,119 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves) {
 
     floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
     countForSecondMove = countSafeSpot(mapData, 2)
-  } else {
+  // } else {
     // could they potentially trap us?
     // let's find out
     // let's see if their next move would block us and eventually kill us
     // make sure we are we (maybe this is a bug?)
-    data.mySnake.id = data.otherSnakes[0].id
+    // data.mySnake.id = data.otherSnakes[0].id
 
     // this should probably be another functions?
-    for (var i = 0; i < data.otherSnakes.length; i++) {
-      if (
-        data.otherSnakes[i].coords[0][0] == closestEnemyHead[0] &&
-        data.otherSnakes[i].coords[0][1] == closestEnemyHead[1]
-      ) {
-        data.mySnake.id = data.otherSnakes[i].id
-      }
-    }
+    // for (var i = 0; i < data.otherSnakes.length; i++) {
+    //   if (
+    //     data.otherSnakes[i].coords[0][0] == closestEnemyHead[0] &&
+    //     data.otherSnakes[i].coords[0][1] == closestEnemyHead[1]
+    //   ) {
+    //     data.mySnake.id = data.otherSnakes[i].id
+    //   }
+    // }
 
-    var possibleMovesFromEnemy = getPossibleMove(data)
-    var resultFromThePossibleMoves = [], c1, c2
+    // var possibleMovesFromEnemy = getPossibleMove(data)
+    // var resultFromThePossibleMoves = [], c1, c2
 
     // find the worst case scenario and
     // and try to avoid that one
-    for (var i = 0; i < possibleMovesFromEnemy.length; i++) {
-      mapData = initGrid({
-        width: data.grid.width,
-        height: data.grid.height,
-        snakes: data.otherSnakes
-      })
-      mapData[possibleMovesFromEnemy[i][1]][possibleMovesFromEnemy[i][0]] = 1
+    // for (var i = 0; i < possibleMovesFromEnemy.length; i++) {
+    //   mapData = initGrid({
+    //     width: data.grid.width,
+    //     height: data.grid.height,
+    //     snakes: data.otherSnakes
+    //   })
+    //   mapData[possibleMovesFromEnemy[i][1]][possibleMovesFromEnemy[i][0]] = 1
 
-      // console.log(possibleMovesFromEnemy[i])
-      floodFill(mapData, possibleMoves[0][1], possibleMoves[0][0], 0, 2)
-      c1 = countSafeSpot(mapData, 2)
-      // console.log(possibleMoves[0])
-      // console.log(c1)
-      floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
-      c2 = countSafeSpot(mapData, 2)
-      // console.log(possibleMoves[1])
-      // console.log(c2)
+    //   // console.log(possibleMovesFromEnemy[i])
+    //   floodFill(mapData, possibleMoves[0][1], possibleMoves[0][0], 0, 2)
+    //   c1 = countSafeSpot(mapData, 2)
+    //   // console.log(possibleMoves[0])
+    //   // console.log(c1)
+    //   floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
+    //   c2 = countSafeSpot(mapData, 2)
+    //   // console.log(possibleMoves[1])
+    //   // console.log(c2)
 
-      resultFromThePossibleMoves.push({
-        c1: c1,
-        c2: c2
-      })
-    }
+    //   resultFromThePossibleMoves.push({
+    //     c1: c1,
+    //     c2: c2
+    //   })
+    // }
 
-    var sumForC1 = 0, sumForC2 = 0
+    // var sumForC1 = 0, sumForC2 = 0
 
-    for (var i = 0; i < resultFromThePossibleMoves.length; i++) {
-      sumForC1 += resultFromThePossibleMoves[i].c1
-      sumForC2 += resultFromThePossibleMoves[i].c2
-    }
+    // for (var i = 0; i < resultFromThePossibleMoves.length; i++) {
+    //   sumForC1 += resultFromThePossibleMoves[i].c1
+    //   sumForC2 += resultFromThePossibleMoves[i].c2
+    // }
 
-    var averForC1 = sumForC1 / resultFromThePossibleMoves.length
-    var averForC2 = sumForC2 / resultFromThePossibleMoves.length
+    // var averForC1 = sumForC1 / resultFromThePossibleMoves.length
+    // var averForC2 = sumForC2 / resultFromThePossibleMoves.length
 
-    var possibleTrapFromEnemy = {
-      itIsPossible: false
-    }
+    // var possibleTrapFromEnemy = {
+    //   itIsPossible: false
+    // }
 
-    for (var i = 0; i < resultFromThePossibleMoves.length; i++) {
-      if (resultFromThePossibleMoves[i].c1*2 < averForC1) {
-        possibleTrapFromEnemy.itIsPossible = true
-        possibleTrapFromEnemy.index = i
-      } else if (resultFromThePossibleMoves[i].c1 > averForC1*2) {
-        possibleTrapFromEnemy.itIsPossible = true
-        possibleTrapFromEnemy.index = i
-      }
+    // for (var i = 0; i < resultFromThePossibleMoves.length; i++) {
+    //   if (resultFromThePossibleMoves[i].c1*2 < averForC1) {
+    //     possibleTrapFromEnemy.itIsPossible = true
+    //     possibleTrapFromEnemy.index = i
+    //   } else if (resultFromThePossibleMoves[i].c1 > averForC1*2) {
+    //     possibleTrapFromEnemy.itIsPossible = true
+    //     possibleTrapFromEnemy.index = i
+    //   }
 
-      if (resultFromThePossibleMoves[i].c2*2 < averForC2) {
-        possibleTrapFromEnemy.itIsPossible = true
-        possibleTrapFromEnemy.index = i
-      } else if (resultFromThePossibleMoves[i].c2 > averForC2*2) {
-        possibleTrapFromEnemy.itIsPossible = true
-        possibleTrapFromEnemy.index = i
-      }
-    }
+    //   if (resultFromThePossibleMoves[i].c2*2 < averForC2) {
+    //     possibleTrapFromEnemy.itIsPossible = true
+    //     possibleTrapFromEnemy.index = i
+    //   } else if (resultFromThePossibleMoves[i].c2 > averForC2*2) {
+    //     possibleTrapFromEnemy.itIsPossible = true
+    //     possibleTrapFromEnemy.index = i
+    //   }
+    // }
 
-    if (possibleTrapFromEnemy.itIsPossible) {
-      // it is possible to get trap from the enemy
-      c1 = resultFromThePossibleMoves[possibleTrapFromEnemy.index].c1
-      c2 = resultFromThePossibleMoves[possibleTrapFromEnemy.index].c2
+    // if (possibleTrapFromEnemy.itIsPossible) {
+    //   // it is possible to get trap from the enemy
+    //   c1 = resultFromThePossibleMoves[possibleTrapFromEnemy.index].c1
+    //   c2 = resultFromThePossibleMoves[possibleTrapFromEnemy.index].c2
 
-      if (c1 > c2) {
-        countForFirstMove = 100
-        countForSecondMove = 0
-      } else {
-        countForFirstMove = 0
-        countForSecondMove = 100
-      }
-    } else {
-      // duplicate (should be merged)
-      // not possible to trap
-      // fall back to choose whichever has the
-      // greatest count
-      mapData = initGrid({
-        width: data.grid.width,
-        height: data.grid.height,
-        snakes: data.otherSnakes
-      })
+    //   if (c1 > c2) {
+    //     countForFirstMove = 100
+    //     countForSecondMove = 0
+    //   } else {
+    //     countForFirstMove = 0
+    //     countForSecondMove = 100
+    //   }
+    // } else {
+    //   // duplicate (should be merged)
+    //   // not possible to trap
+    //   // fall back to choose whichever has the
+    //   // greatest count
+    //   mapData = initGrid({
+    //     width: data.grid.width,
+    //     height: data.grid.height,
+    //     snakes: data.otherSnakes
+    //   })
 
-      floodFill(mapData, possibleMoves[0][1], possibleMoves[0][0], 0, 2)
-      countForFirstMove = countSafeSpot(mapData, 2)
+    //   floodFill(mapData, possibleMoves[0][1], possibleMoves[0][0], 0, 2)
+    //   countForFirstMove = countSafeSpot(mapData, 2)
 
-      mapData = initGrid({
-        width: data.grid.width,
-        height: data.grid.height,
-        snakes: data.otherSnakes
-      })
+    //   mapData = initGrid({
+    //     width: data.grid.width,
+    //     height: data.grid.height,
+    //     snakes: data.otherSnakes
+    //   })
 
-      floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
-      countForSecondMove = countSafeSpot(mapData, 2)
-    }
+    //   floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
+    //   countForSecondMove = countSafeSpot(mapData, 2)
+    // }
   }
 
   return [countForFirstMove, countForSecondMove]
@@ -429,17 +429,17 @@ function findNextMove(data) {
   console.log("after delete " + possibleMoves)
 
   // check if we only have two possible moves left
-  // if (possibleMoves.length == 2) {
-  //   var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
-  //   // check if one move has greater count than the other one
-  //   if (ptForEachMoves[0] < ptForEachMoves[1]) {
-  //     // remove that path since it is not safe
-  //     possibleMoves.splice(0, 1)
-  //   } else {
-  //     // remove that path since it is not safe
-  //     possibleMoves.splice(1, 1)
-  //   }
-  // }
+  if (possibleMoves.length == 2) {
+    var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
+    // check if one move has greater count than the other one
+    if (ptForEachMoves[0] < ptForEachMoves[1]) {
+      // remove that path since it is not safe
+      possibleMoves.splice(0, 1)
+    } else {
+      // remove that path since it is not safe
+      possibleMoves.splice(1, 1)
+    }
+  }
 
   // check if there is closest food and path
   if (data.closestFood !== undefined && data.shortestPath !== undefined) {
