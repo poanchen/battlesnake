@@ -330,7 +330,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves) {
     //   floodFill(mapData, possibleMoves[1][1], possibleMoves[1][0], 0, 2)
     //   countForSecondMove = countSafeSpot(mapData, 2)
     // }
-  }
+  // }
 
   return [countForFirstMove, countForSecondMove]
 }
