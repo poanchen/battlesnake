@@ -431,6 +431,7 @@ function findNextMove(data) {
   // check if we only have two possible moves left
   if (possibleMoves.length == 2) {
     var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
+    console.log(ptForEachMoves)
     // check if one move has greater count than the other one
     if (ptForEachMoves[0] < ptForEachMoves[1]) {
       // remove that path since it is not safe
