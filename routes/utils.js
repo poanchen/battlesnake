@@ -1,4 +1,5 @@
 const pf = require('pathfinding')
+var Immutable = require('immutable')
 
 const RIGHT = 'right'
 const LEFT = 'left'
@@ -8,12 +9,6 @@ const DOWN = 'down'
 const HUNGRY_AT_HEALTH_OF = 80
 
 function findHead(mySnake, otherSnakes) {
-  for (var i = 0; i < otherSnakes.length; i++) {
-      if (otherSnakes[i].id == mySnake.id) {
-        return otherSnakes[i].coords[0]
-      }
-  }
-
   return []
 }
 
@@ -33,27 +28,27 @@ function findClosestFoodAndPath(snakeHead, food, grid) {
   var shortestPath, path
   var closestFood, closestFoodLength = 100000
 
-  for (var i = 0; i < food.length; i++) {
+  food.map(eachFood => {
     path = finder.findPath(
-      snakeHead[0],
-      snakeHead[1],
-      food[i][0],
-      food[i][1],
+      snakeHead.get(0),
+      snakeHead.get(1),
+      eachFood.get(0),
+      eachFood.get(1),
       grid
     )
 
     if (path.length < closestFoodLength && path.length != 0) {
       shortestPath = path
       closestFoodLength = path.length
-      closestFood = food[i]
+      closestFood = eachFood
     }
     grid = originalGrid.clone()
-  }
+  })
 
-  return {
-    shortestPath: shortestPath,
+  return Immutable.Map({
+    shortestPath: Immutable.List(shortestPath),
     closestFood: closestFood
-  }
+  })
 }
 
 function getDirection(from, to) {
@@ -76,7 +71,7 @@ function getDirection(from, to) {
 }
 
 function initGrid(data) {
-  // create a data.height x data.width empty array
+  // create a height x width empty array
   // for example,
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
@@ -84,10 +79,9 @@ function initGrid(data) {
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
-  var grid = Array(data.height).fill(null).map(
-              () => Array(data.width).fill(null).map(
-                () => 0))
-  var x, y
+  var grid = Immutable.List(Array(data.get('height')).fill(null).map(
+              () => Array(data.get('width')).fill(null).map(
+                () => 0))).toJS()
 
   // make sure each snake's coord should be 1
   // for example,
@@ -97,67 +91,68 @@ function initGrid(data) {
   // 1 1 0 1 1 0 0 0
   // 0 1 0 0 0 0 1 1
   // 0 0 0 0 0 0 1 1
-  for (var i = 0; i < data.snakes.length; i++) {
-    for (var j = 0; j < data.snakes[i].coords.length; j++) {
-      x = data.snakes[i].coords[j][1]
-      y = data.snakes[i].coords[j][0]
-      grid[x][y] = 1
+  for (var i = 0; i < data.get('snakes').size; i++) {
+    for (var j = 0; j < data.getIn(['snakes', i, 'coords']).size; j++) {
+      grid = Immutable.fromJS(grid).setIn([
+          data.getIn(['snakes', i, 'coords', j, 1]),
+          data.getIn(['snakes', i, 'coords', j, 0])], 1)
     }
   }
 
-  return grid
+  return grid.toJS()
 }
 
 function getPossibleMove(data) {
-  var possibleMoves = []
-  const myHead = findHead(data.mySnake, data.otherSnakes)
-  
+  var possibleMoves = Immutable.List()
+  var myHead = data.getIn(['myHead'])
+  var grid = data.getIn(['grid'])
+
   if (
-    myHead[1] + 1 >= 0 &&
-    myHead[1] + 1 < data.grid.height &&
-    data.grid.nodes[myHead[1] + 1][myHead[0]].walkable
+    myHead.get(1) + 1 >= 0 &&
+    myHead.get(1) + 1 < grid.height &&
+    grid.nodes[myHead.get(1) + 1][myHead.get(0)].walkable
   ) {
     // check if down is possible
     // console.log("down is possible")
-    // console.log("x", myHead[1] + 1)
-    // console.log("y", myHead[0])
-    possibleMoves.push([myHead[0], myHead[1] + 1])
+    // console.log("x", myHead.get(1) + 1)
+    // console.log("y", myHead.get(0))
+    possibleMoves = possibleMoves.push([myHead.get(0), myHead.get(1) + 1])
   }
 
   if (
-    myHead[0] + 1 >= 0 &&
-    myHead[0] + 1 < data.grid.width &&
-    data.grid.nodes[myHead[1]][myHead[0] + 1].walkable
+    myHead.get(0) + 1 >= 0 &&
+    myHead.get(0) + 1 < grid.width &&
+    grid.nodes[myHead.get(1)][myHead.get(0) + 1].walkable
   ) {
     // check if right is possible
     // console.log("right is possible")
-    // console.log("x", myHead[1])
-    // console.log("y", myHead[0] + 1)
-    possibleMoves.push([myHead[0] + 1, myHead[1]])
+    // console.log("x", myHead.get(1))
+    // console.log("y", myHead.get(0) + 1)
+    possibleMoves = possibleMoves.push([myHead.get(0) + 1, myHead.get(1)])
   }
 
   if (
-    myHead[1] - 1 >= 0 &&
-    myHead[1] - 1 < data.grid.height &&
-    data.grid.nodes[myHead[1] - 1][myHead[0]].walkable
+    myHead.get(1) - 1 >= 0 &&
+    myHead.get(1) - 1 < grid.height &&
+    grid.nodes[myHead.get(1) - 1][myHead.get(0)].walkable
   ) {
     // check if up is possible
     // console.log("up is possible")
-    // console.log("x", myHead[1] - 1)
-    // console.log("y", myHead[0])
-    possibleMoves.push([myHead[0], myHead[1] - 1])
+    // console.log("x", myHead.get(1) - 1)
+    // console.log("y", myHead.get(0))
+    possibleMoves = possibleMoves.push([myHead.get(0), myHead.get(1) - 1])
   }
 
   if (
-    myHead[0] - 1 >= 0 &&
-    myHead[0] - 1 < data.grid.width &&
-    data.grid.nodes[myHead[1]][myHead[0] - 1].walkable
+    myHead.get(0) - 1 >= 0 &&
+    myHead.get(0) - 1 < grid.width &&
+    grid.nodes[myHead.get(1)][myHead.get(0) - 1].walkable
   ) {
     // check for left
     // console.log("left is possible")
-    // console.log("x", myHead[1])
-    // console.log("y", myHead[0] - 1)
-    possibleMoves.push([myHead[0] - 1, myHead[1]])
+    // console.log("x", myHead.get(1))
+    // console.log("y", myHead.get(0) - 1)
+    possibleMoves = possibleMoves.push([myHead.get(0) - 1, myHead.get(1)])
   }
 
   return possibleMoves
@@ -170,19 +165,19 @@ function checkIfItIsOthersDangerousZone(data, pt) {
   var lengthOfOtherSnake = 0
   var itIsOthersDangerousZone = false
 
-  for (var i = 1; i < copiedOfData.otherSnakes.length; i++) {
-    copiedOfData.mySnake.id = copiedOfData.otherSnakes[i].id
-    possibleMoves = getPossibleMove(copiedOfData)
-    for (var j = 0; j < possibleMoves.length; j++) {
-      if (possibleMoves[j][0] == pt[0] && possibleMoves[j][1] == pt[1]) {
-        itIsOthersDangerousZone = true
-        tempSnakeLength = copiedOfData.otherSnakes[i].coords.length
-        if (tempSnakeLength > lengthOfOtherSnake) {
-          lengthOfOtherSnake = tempSnakeLength
-        }
-      }
-    }
-  }
+  // for (var i = 1; i < copiedOfData.otherSnakes.length; i++) {
+  //   copiedOfData.mySnake.id = copiedOfData.otherSnakes[i].id
+  //   possibleMoves = getPossibleMove(copiedOfData)
+  //   for (var j = 0; j < possibleMoves.length; j++) {
+  //     if (possibleMoves[j][0] == pt[0] && possibleMoves[j][1] == pt[1]) {
+  //       itIsOthersDangerousZone = true
+  //       tempSnakeLength = copiedOfData.otherSnakes[i].coords.length
+  //       if (tempSnakeLength > lengthOfOtherSnake) {
+  //         lengthOfOtherSnake = tempSnakeLength
+  //       }
+  //     }
+  //   }
+  // }
 
   return {
     itIsOthersDangerousZone: itIsOthersDangerousZone,
@@ -196,6 +191,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves) {
     height: data.grid.height,
     snakes: data.otherSnakes
   }), countForFirstMove, countForSecondMove
+  // find a place where it is less snake and more spaces
   // find the closest enemy
   // var closestEnemyHead = findClosestFoodAndPath(
   //                           data.otherSnakes[0].coords[0],
@@ -404,74 +400,78 @@ function findNextMove(data) {
   // console.log(data)
 
   // get all the possible moves first
-  var possibleMoves = getPossibleMove(data)
+  var possibleMoves = getPossibleMove(Immutable.Map({
+    myHead: data.getIn(['otherSnakes', 0, 'coords', 0]),
+    grid: data.get('grid')
+  }))
   var safeMoves = []
 
   console.log("possible moves: " + possibleMoves)
 
-  // check if it is someone else dangerous zone
-  for (var i = 0; i < possibleMoves.length; i++) {
-    var isItDangerousResult = checkIfItIsOthersDangerousZone(data, possibleMoves[i])
-    if (isItDangerousResult.itIsOthersDangerousZone &&
-      isItDangerousResult.lengthOfOtherSnake > data.otherSnakes[0].coords.length) {
-      // it is indeed dangerous because their length is longer than my snake
-      // remove that move since it is not safe
-      // possibleMoves.splice(i, 1)
-      // console.log("i: " + i)
-      console.log("The move: " + possibleMoves[i] + " is dangerous!!!!!!!!!!")
-    } else {
-      safeMoves.push(possibleMoves[i])
-      console.log("The move: " + possibleMoves[i] + " is safe.")
-    }
-  }
+  // // check if it is someone else dangerous zone
+  // for (var i = 0; i < possibleMoves.length; i++) {
+  //   var isItDangerousResult = checkIfItIsOthersDangerousZone(data, possibleMoves[i])
+  //   if (isItDangerousResult.itIsOthersDangerousZone &&
+  //     isItDangerousResult.lengthOfOtherSnake > data.otherSnakes[0].coords.length) {
+  //     // it is indeed dangerous because their length is longer than my snake
+  //     // remove that move since it is not safe
+  //     // possibleMoves.splice(i, 1)
+  //     // console.log("i: " + i)
+  //     console.log("The move: " + possibleMoves[i] + " is dangerous!!!!!!!!!!")
+  //   } else {
+  //     safeMoves.push(possibleMoves[i])
+  //     console.log("The move: " + possibleMoves[i] + " is safe.")
+  //   }
+  // }
 
-  possibleMoves = safeMoves
-  console.log("after delete " + possibleMoves)
+  // possibleMoves = safeMoves
+  // console.log("after delete " + possibleMoves)
 
-  // check if we only have two possible moves left
-  if (possibleMoves.length == 2) {
-    var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
-    console.log(ptForEachMoves)
-    // check if one move has greater count than the other one
-    if (ptForEachMoves[0] < ptForEachMoves[1]) {
-      // remove that path since it is not safe
-      possibleMoves.splice(0, 1)
-    } else if (ptForEachMoves[0] > ptForEachMoves[1]) {
-      // remove that path since it is not safe
-      possibleMoves.splice(1, 1)
-    }
-  }
+  // // check if we only have two possible moves left
+  // if (possibleMoves.length == 2) {
+  //   var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves)
+  //   console.log(ptForEachMoves)
+  //   // check if one move has greater count than the other one
+  //   if (ptForEachMoves[0] < ptForEachMoves[1]) {
+  //     // remove that path since it is not safe
+  //     possibleMoves.splice(0, 1)
+  //   } else if (ptForEachMoves[0] > ptForEachMoves[1]) {
+  //     // remove that path since it is not safe
+  //     possibleMoves.splice(1, 1)
+  //   }
+  // }
 
-  console.log(possibleMoves)
+  // console.log(possibleMoves)
 
-  // check if there is closest food and path
-  if (data.closestFood !== undefined && data.shortestPath !== undefined) {
-    if (data.otherSnakes[0].health_points < HUNGRY_AT_HEALTH_OF) {
-      // I think we are hungry and we should go ahead and eat some food
-      // but before we go ahead, let's see if it is safe to do so
-      for (var i = 0; i < possibleMoves.length; i++) {
-        console.log("data.shortestPath" + data.shortestPath)
-        if (possibleMoves[i][0] == data.shortestPath[1][0] &&
-          possibleMoves[i][1] == data.shortestPath[1][1]) {
-          // I think it is safe to eat
-          console.log("The move: " + possibleMoves[i] + "is safe for eating.")
-          return getDirection(data.shortestPath[0], data.shortestPath[1])
-        }
-        // seems like it will be too dangerous to eat the food
-        // let's not do that
-        console.log("The move: " + possibleMoves[i] + "is too dangerous, lets eat later.")
-      }    
-    } else {
-      // instead of eating right now, I think we can wait for a bit more
-      console.log("we are not hungry " + data.otherSnakes[0].health_points + " for now")
-    }
-  } else {
-    console.log("No route to food has been found")
-  }
+  // // check if there is closest food and path
+  // if (data.closestFood !== undefined && data.shortestPath !== undefined) {
+  //   if (data.otherSnakes[0].health_points < HUNGRY_AT_HEALTH_OF) {
+  //     // I think we are hungry and we should go ahead and eat some food
+  //     // but before we go ahead, let's see if it is safe to do so
+  //     for (var i = 0; i < possibleMoves.length; i++) {
+  //       console.log("data.shortestPath" + data.shortestPath)
+  //       if (possibleMoves[i][0] == data.shortestPath[1][0] &&
+  //         possibleMoves[i][1] == data.shortestPath[1][1]) {
+  //         // I think it is safe to eat
+  //         console.log("The move: " + possibleMoves[i] + "is safe for eating.")
+  //         return getDirection(data.shortestPath[0], data.shortestPath[1])
+  //       }
+  //       // seems like it will be too dangerous to eat the food
+  //       // let's not do that
+  //       console.log("The move: " + possibleMoves[i] + "is too dangerous, lets eat later.")
+  //     }    
+  //   } else {
+  //     // instead of eating right now, I think we can wait for a bit more
+  //     console.log("we are not hungry " + data.otherSnakes[0].health_points + " for now")
+  //   }
+  // } else {
+  //   console.log("No route to food has been found")
+  // }
 
-  console.log("possibleMoves:" + possibleMoves)
+  // console.log("possibleMoves:" + possibleMoves)
 
-  return getDirection(data.otherSnakes[0].coords[0], possibleMoves[0])
+  return []
+  // return getDirection(data.otherSnakes[0].coords[0], possibleMoves[0])
 }
 
 module.exports = {

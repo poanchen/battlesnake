@@ -1,4 +1,5 @@
 var pf = require('pathfinding')
+var Immutable =require('immutable')
 const assert = require('assert')
 const utils = require('../routes/utils')
 
@@ -24,7 +25,7 @@ const utils = require('../routes/utils')
 // 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 // 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 // F 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 F
-const otherSnakes = [
+const otherSnakes = Immutable.fromJS([
   {
     "taunt": "git gud",
     "name": "M",
@@ -93,8 +94,8 @@ const otherSnakes = [
       ]
     ]
   }
-]
-const food = [
+])
+const food = Immutable.fromJS([
   [
     0,
     7
@@ -115,48 +116,31 @@ const food = [
     0,
     0
   ]
-]
+])
 
 describe('Testing the functions in utils', function() {
-  describe('#findHead()', function() {
-    it("should return the head of my own snake", function() {
-      const mySnake = {}
-
-      mySnake.id = "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"
-      assert.equal(utils.findHead(mySnake, otherSnakes)[0], 6)
-      assert.equal(utils.findHead(mySnake, otherSnakes)[1], 7)
-
-      mySnake.id = "c35dcf26-7f48-492c-b7b5-94ae78fbc713"
-      assert.equal(utils.findHead(mySnake, otherSnakes)[0], 0)
-      assert.equal(utils.findHead(mySnake, otherSnakes)[1], 1)
-
-      mySnake.id = "c35pcf26-7f48-492c-b7b5-94ae78fbc71a"
-      assert.equal(utils.findHead(mySnake, otherSnakes)[0], 6)
-      assert.equal(utils.findHead(mySnake, otherSnakes)[1], 9)
-    })
-  })
   describe('#findClosestFoodAndPath()', function() {
     it("should return the closest food around my own snake's head", function() {
       var snakeHead;
       const grid = new pf.Grid(
-        utils.initGrid({
+        utils.initGrid(Immutable.Map({
           width: 20,
           height: 20,
           snakes: otherSnakes
-        })
+        }))
       )
 
-      snakeHead = [0, 15]
-      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[0], 0)
-      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[1], 19)
+      snakeHead = Immutable.List([0, 15])
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).getIn(['closestFood', 0]), 0)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).getIn(['closestFood', 1]), 19)
 
-      snakeHead = [15, 15]
-      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[0], 19)
-      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[1], 19)
+      snakeHead = Immutable.List([15, 15])
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).getIn(['closestFood', 0]), 19)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).getIn(['closestFood', 1]), 19)
 
-      snakeHead = [14, 0]
-      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[0], 19)
-      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).closestFood[1], 0)
+      snakeHead = Immutable.List([14, 0])
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).getIn(['closestFood', 0]), 19)
+      assert.equal(utils.findClosestFoodAndPath(snakeHead, food, grid).getIn(['closestFood', 1]), 0)
     })
   })
   describe('#getDirection()', function() {
@@ -183,234 +167,224 @@ describe('Testing the functions in utils', function() {
   })
   describe('#initGrid()', function() {
     it("should return a 2D array where it mark snake's body as 1 and other coord as 0", function() {
-      const data = {
+      const grid = utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: otherSnakes
-      }
-      const grid = utils.initGrid(data)
-      var i
+      }))
 
-      // make sure each snake's coord are 1 in the grid
-      var x, y
-      for (var i = 0; i < data.snakes.length; i++) {
-        for (var j = 0; j < data.snakes[i].coords.length; j++) {
-          x = data.snakes[i].coords[j][1]
-          y = data.snakes[i].coords[j][0]
-          assert.equal(grid[x][y], 1)
-        }
-      }
+      otherSnakes.map((snake, i) => {
+        snake.get('coords').map((pos, j) => {
+          assert.equal(grid[pos.get(1)][pos.get(0)], 1)
+        })
+      })
     })
   })
   describe('#getPossibleMove()', function() {
     it("should only return possible move based on the position of the head", function() {
-      var mySnake = {
-        id: "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"
-      }
-      var snakes = otherSnakes
-      var grid = new pf.Grid(utils.initGrid({
+      var grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
-        snakes: snakes
-      }))
-      var data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+        snakes: otherSnakes
+      })))
+      var data = Immutable.Map({
+        myHead: otherSnakes.getIn([0, 'coords', 0]),
         grid: grid
-      }
+      })
+      var possibleMoves, snakes
 
       // when our snake is at the middle
-      assert.equal(utils.getPossibleMove(data).length, 3)
-      assert.equal(utils.getPossibleMove(data)[0][0], 6)
-      assert.equal(utils.getPossibleMove(data)[0][1], 8)
-      assert.equal(utils.getPossibleMove(data)[1][0], 7)
-      assert.equal(utils.getPossibleMove(data)[1][1], 7)
-      assert.equal(utils.getPossibleMove(data)[2][0], 5)
-      assert.equal(utils.getPossibleMove(data)[2][1], 7)
+      possibleMoves = utils.getPossibleMove(data)
+
+      assert.equal(possibleMoves.size, 3)
+      assert.equal(possibleMoves.get(0)[0], 6)
+      assert.equal(possibleMoves.get(0)[1], 8)
+      assert.equal(possibleMoves.get(1)[0], 7)
+      assert.equal(possibleMoves.get(1)[1], 7)
+      assert.equal(possibleMoves.get(2)[0], 5)
+      assert.equal(possibleMoves.get(2)[1], 7)
 
       // when our snake is at the top left side
-      snakes[0].coords = [
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
         [0, 0],
         [0, 1],
         [0, 2]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([0, 0]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 1)
-      assert.equal(utils.getPossibleMove(data)[0][0], 1)
-      assert.equal(utils.getPossibleMove(data)[0][1], 0)
+      assert.equal(possibleMoves.size, 1)
+      assert.equal(possibleMoves.get(0)[0], 1)
+      assert.equal(possibleMoves.get(0)[1], 0)
 
       // when our snake is at the bottom left side
-      snakes[0].coords = [
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
         [0, 17],
         [0, 18],
         [0, 19]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([0, 17]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 2)
-      assert.equal(utils.getPossibleMove(data)[0][0], 1)
-      assert.equal(utils.getPossibleMove(data)[0][1], 17)
-      assert.equal(utils.getPossibleMove(data)[1][0], 0)
-      assert.equal(utils.getPossibleMove(data)[1][1], 16)
+      assert.equal(possibleMoves.size, 2)
+      assert.equal(possibleMoves.get(0)[0], 1)
+      assert.equal(possibleMoves.get(0)[1], 17)
+      assert.equal(possibleMoves.get(1)[0], 0)
+      assert.equal(possibleMoves.get(1)[1], 16)
 
       // when our snake is at the top right side
-      snakes[0].coords = [
-        [19, 17],
-        [19, 18],
-        [19, 19]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
+        [19, 0],
+        [19, 1],
+        [19, 2]
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([19, 0]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 2)
-      assert.equal(utils.getPossibleMove(data)[0][0], 19)
-      assert.equal(utils.getPossibleMove(data)[0][1], 16)
-      assert.equal(utils.getPossibleMove(data)[1][0], 18)
-      assert.equal(utils.getPossibleMove(data)[1][1], 17)
+      assert.equal(possibleMoves.size, 1)
+      assert.equal(possibleMoves.get(0)[0], 18)
+      assert.equal(possibleMoves.get(0)[1], 0)
 
       // when our snake is at the bottom right side
-      snakes[0].coords = [
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
         [19, 17],
         [19, 18],
         [19, 19]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([19, 17]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 2)
-      assert.equal(utils.getPossibleMove(data)[0][0], 19)
-      assert.equal(utils.getPossibleMove(data)[0][1], 16)
-      assert.equal(utils.getPossibleMove(data)[1][0], 18)
-      assert.equal(utils.getPossibleMove(data)[1][1], 17)
+      assert.equal(possibleMoves.size, 2)
+      assert.equal(possibleMoves.get(0)[0], 19)
+      assert.equal(possibleMoves.get(0)[1], 16)
+      assert.equal(possibleMoves.get(1)[0], 18)
+      assert.equal(possibleMoves.get(1)[1], 17)
 
       // when our snake is at the middle left side
-      snakes[0].coords = [
-        [19, 17],
-        [19, 18],
-        [19, 19]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
+        [0, 10],
+        [0, 11],
+        [0, 12]
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([0, 10]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 2)
-      assert.equal(utils.getPossibleMove(data)[0][0], 19)
-      assert.equal(utils.getPossibleMove(data)[0][1], 16)
-      assert.equal(utils.getPossibleMove(data)[1][0], 18)
-      assert.equal(utils.getPossibleMove(data)[1][1], 17)
+      assert.equal(possibleMoves.size, 2)
+      assert.equal(possibleMoves.get(0)[0], 1)
+      assert.equal(possibleMoves.get(0)[1], 10)
+      assert.equal(possibleMoves.get(1)[0], 0)
+      assert.equal(possibleMoves.get(1)[1], 9)
 
       // when our snake is at the middle right side
-      snakes[0].coords = [
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
         [19, 10],
         [19, 11],
         [19, 12]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([19, 10]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 2)
-      assert.equal(utils.getPossibleMove(data)[0][0], 19)
-      assert.equal(utils.getPossibleMove(data)[0][1], 9)
-      assert.equal(utils.getPossibleMove(data)[1][0], 18)
-      assert.equal(utils.getPossibleMove(data)[1][1], 10)
+      assert.equal(possibleMoves.size, 2)
+      assert.equal(possibleMoves.get(0)[0], 19)
+      assert.equal(possibleMoves.get(0)[1], 9)
+      assert.equal(possibleMoves.get(1)[0], 18)
+      assert.equal(possibleMoves.get(1)[1], 10)
 
       // when our snake is at the top middle side
-      snakes[0].coords = [
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
         [10, 0],
         [10, 1],
         [10, 2]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([10, 0]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 2)
-      assert.equal(utils.getPossibleMove(data)[0][0], 11)
-      assert.equal(utils.getPossibleMove(data)[0][1], 0)
-      assert.equal(utils.getPossibleMove(data)[1][0], 9)
-      assert.equal(utils.getPossibleMove(data)[1][1], 0)
+      assert.equal(possibleMoves.size, 2)
+      assert.equal(possibleMoves.get(0)[0], 11)
+      assert.equal(possibleMoves.get(0)[1], 0)
+      assert.equal(possibleMoves.get(1)[0], 9)
+      assert.equal(possibleMoves.get(1)[1], 0)
 
       // when our snake is at the bottom middle side
-      snakes[0].coords = [
+      snakes = otherSnakes.setIn([0, 'coords'], Immutable.fromJS([
         [10, 17],
         [10, 18],
         [10, 19]
-      ]
-      grid = new pf.Grid(utils.initGrid({
+      ]))
+      grid = new pf.Grid(utils.initGrid(Immutable.Map({
         width: 20,
         height: 20,
         snakes: snakes
-      }))
-      data = {
-        mySnake: mySnake,
-        otherSnakes: snakes,
+      })))
+      data = Immutable.Map({
+        myHead: Immutable.List([10, 17]),
         grid: grid
-      }
+      })
+      possibleMoves = utils.getPossibleMove(data)
 
-      assert.equal(utils.getPossibleMove(data).length, 3)
-      assert.equal(utils.getPossibleMove(data)[0][0], 11)
-      assert.equal(utils.getPossibleMove(data)[0][1], 17)
-      assert.equal(utils.getPossibleMove(data)[1][0], 10)
-      assert.equal(utils.getPossibleMove(data)[1][1], 16)
-      assert.equal(utils.getPossibleMove(data)[2][0], 9)
-      assert.equal(utils.getPossibleMove(data)[2][1], 17)
+      assert.equal(possibleMoves.size, 3)
+      assert.equal(possibleMoves.get(0)[0], 11)
+      assert.equal(possibleMoves.get(0)[1], 17)
+      assert.equal(possibleMoves.get(1)[0], 10)
+      assert.equal(possibleMoves.get(1)[1], 16)
+      assert.equal(possibleMoves.get(2)[0], 9)
+      assert.equal(possibleMoves.get(2)[1], 17)
     })
   })
   describe('#checkIfItIsOthersDangerousZone()', function() {
