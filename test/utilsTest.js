@@ -1,5 +1,5 @@
 var pf = require('pathfinding')
-var Immutable =require('immutable')
+var Immutable = require('immutable')
 const assert = require('assert')
 const utils = require('../routes/utils')
 
@@ -121,7 +121,7 @@ const food = Immutable.fromJS([
 describe('Testing the functions in utils', function() {
   describe('#findClosestFoodAndPath()', function() {
     it("should return the closest food around my own snake's head", function() {
-      var snakeHead;
+      var snakeHead
       const grid = new pf.Grid(
         utils.initGrid(Immutable.Map({
           width: 20,
@@ -145,24 +145,13 @@ describe('Testing the functions in utils', function() {
   })
   describe('#getDirection()', function() {
     it("should return up, down, right or left given the starting and ending points", function() {
-      var from;
-      var to;
+      assert.equal(utils.getDirection([5, 5], [5, 6]), 'down')
 
-      from = [5, 5]
-      to = [5, 6]
-      assert.equal(utils.getDirection(from, to), 'down')
+      assert.equal(utils.getDirection([5, 5], [6, 5]), 'right')
 
-      from = [5, 5]
-      to = [6, 5]
-      assert.equal(utils.getDirection(from, to), 'right')
+      assert.equal(utils.getDirection([5, 5], [5, 4]), 'up')
 
-      from = [5, 5]
-      to = [5, 4]
-      assert.equal(utils.getDirection(from, to), 'up')
-
-      from = [5, 5]
-      to = [4, 5]
-      assert.equal(utils.getDirection(from, to), 'left')
+      assert.equal(utils.getDirection([5, 5], [4, 5]), 'left')
     })
   })
   describe('#initGrid()', function() {

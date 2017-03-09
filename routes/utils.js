@@ -463,7 +463,7 @@ function findNextMove(data) {
         }
         // seems like it will be too dangerous to eat the food
         // let's not do that
-        console.log("The move: " + eachMove + "is too dangerous, lets eat later.")
+        console.log("The move: " + eachMove + " is too dangerous, lets eat later.")
       })
     } else {
       // instead of eating right now, I think we can wait for a bit more
