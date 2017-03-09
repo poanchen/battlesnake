@@ -389,32 +389,30 @@ describe('Testing the functions in utils', function() {
   })
   describe('#checkIfItIsOthersDangerousZone()', function() {
     it("should return true if it is some other snakes' dangerous zone and their length", function() {
-      var data = {
-        mySnake: {
-          id: "2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"
-        },
-        otherSnakes: otherSnakes,
-        grid: new pf.Grid(utils.initGrid({
-          width: 20,
-          height: 20,
-          snakes: otherSnakes
-        }))
-      }
+      var data = Immutable.Map({
+                  otherSnakes: otherSnakes,
+                  myHead: otherSnakes.getIn([0, 'coords', 0]),
+                  grid: new pf.Grid(utils.initGrid(Immutable.Map({
+                    width: 20,
+                    height: 20,
+                    snakes: otherSnakes
+                  })))
+                 })
 
-      var pt = [6, 8]
-      var ifItIsOthersDangerousZone = utils.checkIfItIsOthersDangerousZone(data, pt)
-      assert.equal(ifItIsOthersDangerousZone.itIsOthersDangerousZone, true)
-      assert.equal(ifItIsOthersDangerousZone.lengthOfOtherSnake, 4)
+      data = data.set('nextPossibleMoveFromUs', [6, 8])
+      var ifItIsOthersDangerousZone = utils.checkIfItIsOthersDangerousZone(data)
+      assert.equal(ifItIsOthersDangerousZone.get('itIsOthersDangerousZone'), true)
+      assert.equal(ifItIsOthersDangerousZone.get('lengthOfOtherSnake'), 4)
 
-      pt = [0, 0]
-      ifItIsOthersDangerousZone = utils.checkIfItIsOthersDangerousZone(data, pt)
-      assert.equal(ifItIsOthersDangerousZone.itIsOthersDangerousZone, true)
-      assert.equal(ifItIsOthersDangerousZone.lengthOfOtherSnake, 4)
+      data = data.set('nextPossibleMoveFromUs', [0, 0])
+      ifItIsOthersDangerousZone = utils.checkIfItIsOthersDangerousZone(data)
+      assert.equal(ifItIsOthersDangerousZone.get('itIsOthersDangerousZone'), true)
+      assert.equal(ifItIsOthersDangerousZone.get('lengthOfOtherSnake'), 4)
 
-      pt = [15, 15]
-      ifItIsOthersDangerousZone = utils.checkIfItIsOthersDangerousZone(data, pt)
-      assert.equal(ifItIsOthersDangerousZone.itIsOthersDangerousZone, false)
-      assert.equal(ifItIsOthersDangerousZone.lengthOfOtherSnake, 0)
+      data = data.set('nextPossibleMoveFromUs', [15, 15])
+      ifItIsOthersDangerousZone = utils.checkIfItIsOthersDangerousZone(data)
+      assert.equal(ifItIsOthersDangerousZone.get('itIsOthersDangerousZone'), false)
+      assert.equal(ifItIsOthersDangerousZone.get('lengthOfOtherSnake'), 0)
     })
   })
 })

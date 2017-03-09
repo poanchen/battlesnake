@@ -56,16 +56,12 @@ function getDirection(from, to) {
   var y = to[1] - from[1]
 
   if (x == 1) {
-
     return RIGHT
   } else if (x == -1) {
-
     return LEFT
   } else if (y == -1) {
-
     return UP
   } else if (y == 1) {
-
     return DOWN
   }
 }
@@ -104,8 +100,8 @@ function initGrid(data) {
 
 function getPossibleMove(data) {
   var possibleMoves = Immutable.List()
-  var myHead = data.getIn(['myHead'])
-  var grid = data.getIn(['grid'])
+  var myHead = data.get('myHead')
+  var grid = data.get('grid')
 
   if (
     myHead.get(1) + 1 >= 0 &&
@@ -158,12 +154,26 @@ function getPossibleMove(data) {
   return possibleMoves
 }
 
-function checkIfItIsOthersDangerousZone(data, pt) {
-  var possibleMoves
-  var tempSnakeLength
-  var copiedOfData = Object.assign({}, data);
+function checkIfItIsOthersDangerousZone(data) {
+  var possibleMovesFromEnemy
   var lengthOfOtherSnake = 0
   var itIsOthersDangerousZone = false
+
+  data.get('otherSnakes').map(eachSnake => {
+    possibleMovesFromEnemy = getPossibleMove(Immutable.Map({
+                                myHead: eachSnake.getIn(['coords', 0]),
+                                grid: data.get('grid')
+                             }))
+    possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
+      if (eachPossibleMoveFromEnemy[0] == data.get('nextPossibleMoveFromUs')[0] &&
+          eachPossibleMoveFromEnemy[1] == data.get('nextPossibleMoveFromUs')[1]) {
+        itIsOthersDangerousZone = true
+        if (eachSnake.get('coords').size > lengthOfOtherSnake) {
+          lengthOfOtherSnake = eachSnake.get('coords').size
+        }
+      }
+    })
+  })
 
   // for (var i = 1; i < copiedOfData.otherSnakes.length; i++) {
   //   copiedOfData.mySnake.id = copiedOfData.otherSnakes[i].id
@@ -179,10 +189,10 @@ function checkIfItIsOthersDangerousZone(data, pt) {
   //   }
   // }
 
-  return {
+  return Immutable.Map({
     itIsOthersDangerousZone: itIsOthersDangerousZone,
     lengthOfOtherSnake: lengthOfOtherSnake
-  }
+  })
 }
 
 function useFloodFillAlgToDecideWhichWayIsBetter(data, possibleMoves) {
@@ -404,11 +414,31 @@ function findNextMove(data) {
     myHead: data.getIn(['otherSnakes', 0, 'coords', 0]),
     grid: data.get('grid')
   }))
-  var safeMoves = []
+  var safeMoves = Immutable.List()
 
-  console.log("possible moves: " + possibleMoves)
+  console.log("safeMoves moves: " + safeMoves)
 
-  // // check if it is someone else dangerous zone
+  // check if it is someone else dangerous zone
+  possibleMoves.map(eachPossibleMove => {
+    var isItDangerous = checkIfItIsOthersDangerousZone(Immutable.Map({
+                          otherSnakes: data.get('otherSnakes'),
+                          nextPossibleMoveFromUs: eachPossibleMove,
+                          myHead: data.getIn(['otherSnakes', 0, 'coords', 0]),
+                          grid: data.get('grid')
+                        }))
+
+    if (isItDangerous.get('itIsOthersDangerousZone') &&
+        isItDangerous.get('lengthOfOtherSnake') > data.getIn(['otherSnakes', 0, 'coords']).size) {
+      // it is indeed dangerous because their length is longer than my snake
+      // remove that move since it is not safe
+      // console.log("i: " + i)
+      console.log("The move: " + eachPossibleMove + " is dangerous!!!!!!!!!!")
+    } else {
+      safeMoves = safeMoves.push(eachPossibleMove)
+      console.log("The move: " + eachPossibleMove + " is safe.")
+    }
+  })
+
   // for (var i = 0; i < possibleMoves.length; i++) {
   //   var isItDangerousResult = checkIfItIsOthersDangerousZone(data, possibleMoves[i])
   //   if (isItDangerousResult.itIsOthersDangerousZone &&
