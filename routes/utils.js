@@ -459,6 +459,7 @@ function findNextMove(data) {
           eachMove[1] == data.getIn(['shortestPath', 1])[1]) {
           // I think it is safe to eat
           console.log("The move: " + eachMove + " is safe for eating.")
+          console.log(getDirection(data.getIn(['shortestPath', 0]), data.getIn(['shortestPath', 1])))
           return getDirection(data.getIn(['shortestPath', 0]), data.getIn(['shortestPath', 1]))
         }
         // seems like it will be too dangerous to eat the food
