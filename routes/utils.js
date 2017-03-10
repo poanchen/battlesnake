@@ -455,9 +455,6 @@ function findNextMove(data) {
       // but before we go ahead, let's see if it is safe to do so
       for (var i = 0; i < safeMoves.size; i++) {
         console.log("data.shortestPath " + data.get('shortestPath'))
-        console.log(safeMoves.get(i)[0] == data.getIn(['shortestPath', 1])[0])
-        console.log(safeMoves.get(i)[1] == data.getIn(['shortestPath', 1])[1])
-        console.log('sdfds')
         if (safeMoves.get(i)[0] == data.getIn(['shortestPath', 1])[0] &&
           safeMoves.get(i)[1] == data.getIn(['shortestPath', 1])[1]) {
           // I think it is safe to eat
@@ -466,7 +463,7 @@ function findNextMove(data) {
         }
         // seems like it will be too dangerous to eat the food
         // let's not do that
-        console.log("The move: " + eachMove + " is too dangerous, lets eat later.")
+        console.log("The move: " + safeMoves.get(i) + " is too dangerous, lets eat later.")
       }
     } else {
       // instead of eating right now, I think we can wait for a bit more
