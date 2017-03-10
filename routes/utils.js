@@ -453,19 +453,18 @@ function findNextMove(data) {
     if (data.getIn(['otherSnakes', 0, 'health_points']) < HUNGRY_AT_HEALTH_OF) {
       // I think we are hungry and we should go ahead and eat some food
       // but before we go ahead, let's see if it is safe to do so
-      safeMoves.map(eachMove => {
+      for (var i = 0; i < safeMoves.size; i++) {
         console.log("data.shortestPath" + data.get('shortestPath'))
-        if (eachMove[0] == data.getIn(['shortestPath', 1])[0] &&
-          eachMove[1] == data.getIn(['shortestPath', 1])[1]) {
+        if (safeMoves.get(i)[0] == data.getIn(['shortestPath', 1])[0] &&
+          safeMoves.get(i)[1] == data.getIn(['shortestPath', 1])[1]) {
           // I think it is safe to eat
-          console.log("The move: " + eachMove + " is safe for eating.")
-          console.log(getDirection(data.getIn(['shortestPath', 0]), data.getIn(['shortestPath', 1])))
+          console.log("The move: " + safeMoves.get(i) + " is safe for eating.")
           return getDirection(data.getIn(['shortestPath', 0]), data.getIn(['shortestPath', 1]))
         }
         // seems like it will be too dangerous to eat the food
         // let's not do that
         console.log("The move: " + eachMove + " is too dangerous, lets eat later.")
-      })
+      }
     } else {
       // instead of eating right now, I think we can wait for a bit more
       console.log("we are not hungry " + data.getIn(['otherSnakes', 0, 'health_points']) + " for now")
