@@ -8,7 +8,7 @@
   "snake" : {
     "id" : "0",
     "name": "PPAP",
-    "color": "#DFFF00",
+    "color": "#FFFFFF",
     "head_url": "http://vignette2.wikia.nocookie.net/central/images/d/de/One_Piece_logo.png/revision/latest?cb=20160220025555",
     "head_type": "tongue",
     "tail_type": "skinny-tail",
