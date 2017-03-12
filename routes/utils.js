@@ -275,7 +275,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
-    
+
     safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove])
   })
 
@@ -301,6 +301,8 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
       }
     }
   })
+
+  console.log('trappable ?' + trappable)
 
   if (trappable) {
     // they could trap us, lets see which way is better move
