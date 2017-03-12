@@ -6,7 +6,7 @@ const LEFT = 'left'
 const UP = 'up'
 const DOWN = 'down'
 
-const HUNGRY_AT_HEALTH_OF = 80
+const HUNGRY_AT_HEALTH_OF = 50
 
 function getAllEnemiesHead(mySnake, otherSnakes) {
   var enemiesHead = []
@@ -373,7 +373,7 @@ function floodFill(mapData, x, y, oldVal, newVal) {
 
 function countSafeSpot(data) {
   var sum = 0
-  const mapWidth = data.getIn(['mapData']).size,
+  const mapWidth = data.get('mapData').size,
     mapHeight = data.getIn(['mapData', 0]).length
 
   data.get('mapData').map(eachRow => {
