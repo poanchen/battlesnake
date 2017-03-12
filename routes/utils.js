@@ -475,7 +475,11 @@ function findNextMove(data) {
 
   console.log("possibleMoves: " + safeMoves)
 
-  return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(0))
+  if (safeMoves.size > 1) {
+    return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(1))
+  } else {
+    return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(0))
+  }
 }
 
 module.exports = {
