@@ -192,7 +192,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     width: data.get('grid').width,
     height: data.get('grid').height,
     snakes: data.get('otherSnakes')
-  })), countForFirstMove, countForSecondMove
+  })), countForFirstMove, countForSecondMove, countForThirdMove
   var emptyGrid = new pf.Grid(initGrid(Immutable.Map({
     width: data.get('grid').width,
     height: data.get('grid').height,
@@ -239,7 +239,26 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                         newVal: 2
                       }))
 
-  safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
+  // when there are 3 possible moves, we should check as well using flood fill alg
+  if (data.getIn(['nextPossibleMovesFromUs']).size == 3) {
+    mapData = initGrid(Immutable.Map({
+      width: data.get('grid').width,
+      height: data.get('grid').height,
+      snakes: data.get('otherSnakes')
+    }))
+
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 2])[1], data.getIn(['nextPossibleMovesFromUs', 2])[0], 0, 2)
+    countForThirdMove = countSafeSpot(Immutable.Map({
+                          mapData: Immutable.List(mapData),
+                          newVal: 2
+                        }))
+
+    safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove, countForThirdMove])
+  } else {
+    safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
+  }
+
+  console.log('safeSpotCounts ' + safeSpotCounts)
 
   var safeSpotCountsFromEnemies = Immutable.List()
 
@@ -253,7 +272,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
       height: data.get('grid').height,
       snakes: data.get('otherSnakes')
     }))
-    // fill the enemy's next potential move
+    // fill the enemy's next potential move (maybe couple more might be a good idea?)
     mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
     
     floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
@@ -267,7 +286,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
       height: data.get('grid').height,
       snakes: data.get('otherSnakes')
     }))
-    // fill the enemy's next potential move
+    // fill the enemy's next potential move (maybe couple more might be a good idea?)
     mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
 
     floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 2)
@@ -276,45 +295,74 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           newVal: 2
                         }))
 
-    safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove])
+    // when there are 3 possible moves, we should check as well using flood fill alg
+    if (data.getIn(['nextPossibleMovesFromUs']).size == 3) {
+      mapData = initGrid(Immutable.Map({
+        width: data.get('grid').width,
+        height: data.get('grid').height,
+        snakes: data.get('otherSnakes')
+      }))
+      // fill the enemy's next potential move (maybe couple more might be a good idea?)
+      mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
+
+      floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 2])[1], data.getIn(['nextPossibleMovesFromUs', 2])[0], 0, 2)
+      countForThirdMove = countSafeSpot(Immutable.Map({
+                            mapData: Immutable.List(mapData),
+                            newVal: 2
+                          }))
+
+      safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove, countForThirdMove])
+    } else {
+      safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove])
+    }
   })
+
+  console.log('safeSpotCountsFromEnemies ' + safeSpotCountsFromEnemies)
 
   var trappable = false, biggestSafeSpotCountDiff = 0, moveDiff = 0
   
   // try to see if others could potentially trap us
   // by checking if the count for safe spot is the
   // same regardless of their next move
-  safeSpotCountsFromEnemies.map((eachMove, index) => {
-    moveDiff = Math.abs(eachMove[0] - eachMove[1])
-    if (moveDiff <= 1) {
-      // if each of their move does not effect our
-      // count for safe spot, then I think it is
-      // safe to assume that they would not potentially
-      // trap us (at least one step ahead)
-    } else {
-      // since their next move does effect our count
-      // for safe spot, as a result, there is a potential
-      // that they could trap us
-      trappable = true
-      if (moveDiff > biggestSafeSpotCountDiff) {
-        biggestSafeSpotCountDiff = index
+  safeSpotCountsFromEnemies.map((eachMove, indexI) => {
+    safeSpotCounts.toJS()[0].map((eachSpot, indexJ) => {
+      moveDiff = Math.abs(eachMove[indexJ] - eachSpot)
+      if (moveDiff <= 1) {
+        // if each of their move does not effect our
+        // count for safe spot, then I think it is
+        // safe to assume that they would not potentially
+        // trap us (at least one step ahead)
+      } else {
+        // since their next move does effect our count
+        // for safe spot, as a result, there is a potential
+        // that they could trap us
+        trappable = true
+        if (moveDiff > biggestSafeSpotCountDiff) {
+          biggestSafeSpotCountDiff = indexI
+        }
       }
-    }
+    })
   })
 
-  console.log('trappable ? ' + trappable)
+  console.log('can other snake trap us? ' + trappable)
 
   if (trappable) {
     // they could trap us, lets see which way is better move
-    console.log('worest safeSpotCounts' + safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff))
+    console.log('worest safeSpotCounts ' + safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff))
     countForFirstMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[0]
     countForSecondMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[1]
+    if (safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff).length == 3) {
+      countForThirdMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[2]
+    }
   } else {
     // they would not be able to trap us (at least one step ahead)
     // simply pick the one that has the greatest count
-    console.log('safeSpotCounts' + safeSpotCounts)
+    console.log('safeSpotCounts ' + safeSpotCounts)
     countForFirstMove = safeSpotCounts.get(0)[0]
     countForSecondMove = safeSpotCounts.get(0)[1]
+    if (safeSpotCounts.get(0).length == 3) {
+      countForThirdMove = safeSpotCounts.get(0)[2]
+    }
   }
 
   // } else {
@@ -418,6 +466,14 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // }
   // find a place where it is less snake and more spaces
 
+  if (data.getIn(['nextPossibleMovesFromUs']).size == 3) {
+    return Immutable.Map({
+      countForFirstMove: countForFirstMove,
+      countForSecondMove: countForSecondMove,
+      countForThirdMove: countForThirdMove
+    })
+  }
+
   return Immutable.Map({
     countForFirstMove: countForFirstMove,
     countForSecondMove: countForSecondMove
@@ -511,6 +567,9 @@ function findNextMove(data) {
     if (isItDangerous.get('itIsOthersDangerousZone') &&
         isItDangerous.get('lengthOfOtherSnake') > data.getIn(['otherSnakes', 0, 'coords']).size) {
       // it is indeed dangerous because their length is longer than my snake
+      // or their length is same with us
+      // when both snake head on and their length is the same, both snake will die
+      // maybe add this case in the future?
       console.log("The move: " + eachPossibleMove + " is dangerous!!!!!!!!!!")
     } else {
       // add that move since it is safe
@@ -521,22 +580,42 @@ function findNextMove(data) {
 
   console.log("after delete " + safeMoves)
 
-  // check if we only have two possible moves left
-  if (safeMoves.size == 2) {
+  // Always use flood fill alg when we have
+  // more than 2 possible moves left
+  if (safeMoves.size >= 2) {
     var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(Immutable.Map({
                           otherSnakes: data.get('otherSnakes'),
                           nextPossibleMovesFromUs: safeMoves,
                           grid: data.get('grid')
                         }))
 
-    // check if one move has greater count than the other one
-    if (ptForEachMoves.get('countForFirstMove') < ptForEachMoves.get('countForSecondMove')) {
-      // remove that path since it is not safe
-      safeMoves = safeMoves.delete(0)
-    } else if (ptForEachMoves.get('countForFirstMove') > ptForEachMoves.get('countForSecondMove')) {
-      // remove that path since it is not safe
-      safeMoves = safeMoves.delete(1)
+    // now the least number will be on the first element of List
+    ptForEachMoves = ptForEachMoves.sort()
+
+    // make sure we remove the one with the smallest one (relatively dangerous move)
+    if (ptForEachMoves.get(ptForEachMoves.keySeq().get(0)) < ptForEachMoves.get(ptForEachMoves.keySeq().get(1))) {
+      switch(ptForEachMoves.keySeq().get(0)) {
+        case 'countForFirstMove':
+          safeMoves = safeMoves.delete(0)
+          break
+        case 'countForSecondMove':
+          safeMoves = safeMoves.delete(1)
+          break
+        case 'countForThirdMove':
+          safeMoves = safeMoves.delete(2)
+          break
+        default:
+          // do nothing here
+          // should never come here at all
+          break
+      }
+    } else {
+      // we do not remove this move since the count for move is the same with the second one
+      // that means there is not much differences between those two
     }
+
+    console.log('we just did a flood fill alg')
+    console.log('result ' + safeMoves)
   }
 
   // check if there is closest food and path
