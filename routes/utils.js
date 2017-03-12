@@ -213,39 +213,39 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   }))
   var safeSpotCounts = Immutable.List()
 
-  // think one step ahead of ourself by filling each
-  // enemies's possible move and count the safe spot
-  // based on our possible move
-  possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
-    mapData = initGrid(Immutable.Map({
-      width: data.get('grid').width,
-      height: data.get('grid').height,
-      snakes: data.get('otherSnakes')
-    }))
+  // first assume no other snakes can trap us and lets see which
+  // way is better to go with
+  mapData = initGrid(Immutable.Map({
+    width: data.get('grid').width,
+    height: data.get('grid').height,
+    snakes: data.get('otherSnakes')
+  }))
 
-    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
-    countForFirstMove = countSafeSpot(Immutable.Map({
-                          mapData: Immutable.List(mapData),
-                          newVal: 2
-                        }))
-    
-    mapData = initGrid(Immutable.Map({
-      width: data.get('grid').width,
-      height: data.get('grid').height,
-      snakes: data.get('otherSnakes')
-    }))
+  floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
+  countForFirstMove = countSafeSpot(Immutable.Map({
+                        mapData: Immutable.List(mapData),
+                        newVal: 2
+                      }))
+  
+  mapData = initGrid(Immutable.Map({
+    width: data.get('grid').width,
+    height: data.get('grid').height,
+    snakes: data.get('otherSnakes')
+  }))
 
-    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 2)
-    countForSecondMove = countSafeSpot(Immutable.Map({
-                          mapData: Immutable.List(mapData),
-                          newVal: 2
-                        }))
+  floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 2)
+  countForSecondMove = countSafeSpot(Immutable.Map({
+                        mapData: Immutable.List(mapData),
+                        newVal: 2
+                      }))
 
-    safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
-  })
+  safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
 
   var safeSpotCountsFromEnemies = Immutable.List()
 
+  // think one step ahead of ourself by filling each
+  // enemies's possible move and count the safe spot
+  // based on our possible move
   // maybe make this as another function
   possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
     mapData = initGrid(Immutable.Map({
