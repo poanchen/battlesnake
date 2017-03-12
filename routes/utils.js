@@ -240,6 +240,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
+
     safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
   })
 
@@ -274,6 +275,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
+    
     safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove])
   })
 
@@ -560,11 +562,7 @@ function findNextMove(data) {
 
   console.log("possibleMoves: " + safeMoves)
 
-  if (safeMoves.size > 1) {
-    return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(1))
-  } else {
-    return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(0))
-  }
+  return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(0))
 }
 
 module.exports = {
