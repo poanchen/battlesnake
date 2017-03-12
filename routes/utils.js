@@ -192,7 +192,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     width: data.get('grid').width,
     height: data.get('grid').height,
     snakes: data.get('otherSnakes')
-  })), countForFirstMove, countForSecondMove
+  })), countForFirstMove, countForSecondMove, countForThirdMove
   var emptyGrid = new pf.Grid(initGrid(Immutable.Map({
     width: data.get('grid').width,
     height: data.get('grid').height,
@@ -240,7 +240,20 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
-    safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
+
+    mapData = initGrid(Immutable.Map({
+      width: data.get('grid').width,
+      height: data.get('grid').height,
+      snakes: data.get('otherSnakes')
+    }))
+
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 2])[1], data.getIn(['nextPossibleMovesFromUs', 2])[0], 0, 2)
+    countForThirdMove = countSafeSpot(Immutable.Map({
+                          mapData: Immutable.List(mapData),
+                          newVal: 2
+                        }))
+
+    safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove, countForThirdMove])
   })
 
   var safeSpotCountsFromEnemies = Immutable.List()
@@ -274,7 +287,22 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
-    safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove])
+
+    mapData = initGrid(Immutable.Map({
+      width: data.get('grid').width,
+      height: data.get('grid').height,
+      snakes: data.get('otherSnakes')
+    }))
+    // fill the enemy's next potential move
+    mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
+
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 2])[1], data.getIn(['nextPossibleMovesFromUs', 2])[0], 0, 2)
+    countForThirdMove = countSafeSpot(Immutable.Map({
+                          mapData: Immutable.List(mapData),
+                          newVal: 2
+                        }))
+
+    safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove, countForThirdMove])
   })
 
   var trappable = false, biggestSafeSpotCountDiff = 0, moveDiff = 0
@@ -298,17 +326,28 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
         biggestSafeSpotCountDiff = index
       }
     }
+
+    // maybe there is better way to do this?
+    moveDiff = Math.abs(eachMove[1] - eachMove[2])
+    if (moveDiff > 1) {
+      trappable = true
+      if (moveDiff > biggestSafeSpotCountDiff) {
+        biggestSafeSpotCountDiff = index
+      }
+    }
   })
 
   if (trappable) {
     // they could trap us, lets see which way is better move
     countForFirstMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[0]
     countForSecondMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[1]
+    countForThirdMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[2]
   } else {
     // they would not be able to trap us (at least one step ahead)
     // simply pick the one that has the greatest count
     countForFirstMove = safeSpotCounts.get(0)[0]
     countForSecondMove = safeSpotCounts.get(0)[1]
+    countForThirdMove = safeSpotCounts.get(0)[2]
   }
 
   // } else {
@@ -414,7 +453,8 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
 
   return Immutable.Map({
     countForFirstMove: countForFirstMove,
-    countForSecondMove: countForSecondMove
+    countForSecondMove: countForSecondMove,
+    countForThirdMove: countForThirdMove
   })
 }
 
@@ -515,24 +555,53 @@ function findNextMove(data) {
 
   console.log("after delete " + safeMoves)
 
-  // check if we only have two possible moves left
-  if (safeMoves.size == 2) {
-    var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(Immutable.Map({
-                          otherSnakes: data.get('otherSnakes'),
-                          nextPossibleMovesFromUs: safeMoves,
-                          grid: data.get('grid')
-                        }))
+  var ptForEachMoves = useFloodFillAlgToDecideWhichWayIsBetter(Immutable.Map({
+                        otherSnakes: data.get('otherSnakes'),
+                        nextPossibleMovesFromUs: safeMoves,
+                        grid: data.get('grid')
+                      }))
+  var smallestMoveIndex = 3, smallestMove = 100000
 
-    // check if one move has greater count than the other one
-    if (ptForEachMoves.get('countForFirstMove') < ptForEachMoves.get('countForSecondMove')) {
-      // remove that path since it is not safe
-      safeMoves = safeMoves.delete(0)
-    } else if (ptForEachMoves.get('countForFirstMove') > ptForEachMoves.get('countForSecondMove')) {
-      // remove that path since it is not safe
-      safeMoves = safeMoves.delete(1)
+  // check if one move has greater count than the other one
+  if (ptForEachMoves.get('countForFirstMove') < ptForEachMoves.get('countForSecondMove')) {
+    smallestMove = ptForEachMoves.get('countForFirstMove')
+    smallestMoveIndex = 0
+  } else if (ptForEachMoves.get('countForFirstMove') > ptForEachMoves.get('countForSecondMove')) {
+    smallestMove = ptForEachMoves.get('countForSecondMove')
+    smallestMoveIndex = 1
+  }
+
+  if (smallestMoveIndex == 3) {
+    if (ptForEachMoves.get('countForFirstMove') > ptForEachMoves.get('countForThirdMove')) {
+      smallestMove = ptForEachMoves.get('countForThirdMove')
+      smallestMoveIndex = 2
+    }
+  } else {
+    switch(smallestMoveIndex) {
+      case 0:
+          if (ptForEachMoves.get('countForFirstMove') > ptForEachMoves.get('countForThirdMove')) {
+            smallestMove = ptForEachMoves.get('countForThirdMove')
+            smallestMoveIndex = 2
+          } else if (ptForEachMoves.get('countForFirstMove') < ptForEachMoves.get('countForThirdMove')) {
+            smallestMove = ptForEachMoves.get('countForFirstMove')
+            smallestMoveIndex = 0
+          }
+        break
+      case 1:
+          if (ptForEachMoves.get('countForSecondMove') > ptForEachMoves.get('countForThirdMove')) {
+            smallestMove = ptForEachMoves.get('countForThirdMove')
+            smallestMoveIndex = 2
+          } else if (ptForEachMoves.get('countForSecondMove') < ptForEachMoves.get('countForThirdMove')) {
+            smallestMove = ptForEachMoves.get('countForSecondMove')
+            smallestMoveIndex = 1
+          }
+        break
     }
   }
 
+  // remove that path since it is not safe
+  safeMoves = safeMoves.delete(smallestMoveIndex)
+  
   // check if there is closest food and path
   if (data.get('closestFood') !== undefined && data.get('shortestPath') !== undefined) {
     if (data.getIn(['otherSnakes', 0, 'health_points']) < HUNGRY_AT_HEALTH_OF) {
