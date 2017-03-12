@@ -195,7 +195,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // if (closestEnemyHead.closestFood === undefined && closestEnemyHead.shortestPath === undefined) {
     // it seems like we are already trap?
     // try to find the best way to go
-    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 'O')
     console.log(mapData)
     countForFirstMove = countSafeSpot(Immutable.Map({
                           mapData: Immutable.List(mapData),
@@ -208,7 +208,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
       snakes: data.get('otherSnakes')
     }))
 
-    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 2)
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 'O')
     console.log(mapData)
     countForSecondMove = countSafeSpot(Immutable.Map({
                           mapData: Immutable.List(mapData),
