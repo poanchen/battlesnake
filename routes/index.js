@@ -32,11 +32,11 @@ router.post(config.route.move, function (req, res) {
   var resultFromFindClosestFood = utils.findClosestFoodAndPath(
     otherSnakes.getIn([0, 'coords', 0]), food, grid)
 
-  // console.log(utils.initGrid(Immutable.Map({
-  //   width: body.get('width'),
-  //   height: body.get('height'),
-  //   snakes: otherSnakes
-  // })))
+  console.log(utils.initGrid(Immutable.Map({
+    width: body.get('width'),
+    height: body.get('height'),
+    snakes: otherSnakes
+  })))
 
   return res.json(Immutable.Map({
     move: utils.findNextMove(Immutable.Map({
