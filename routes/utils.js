@@ -302,15 +302,17 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     }
   })
 
-  console.log('trappable ?' + trappable)
+  console.log('trappable ? ' + trappable)
 
   if (trappable) {
     // they could trap us, lets see which way is better move
+    console.log('worest safeSpotCounts' + safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff))
     countForFirstMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[0]
     countForSecondMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[1]
   } else {
     // they would not be able to trap us (at least one step ahead)
     // simply pick the one that has the greatest count
+    console.log('safeSpotCounts' + safeSpotCounts)
     countForFirstMove = safeSpotCounts.get(0)[0]
     countForSecondMove = safeSpotCounts.get(0)[1]
   }
