@@ -199,7 +199,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     console.log(mapData)
     countForFirstMove = countSafeSpot(Immutable.Map({
                           mapData: Immutable.List(mapData),
-                          newVal: 2
+                          newVal: 'O'
                         }))
 
     mapData = initGrid(Immutable.Map({
@@ -212,7 +212,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     console.log(mapData)
     countForSecondMove = countSafeSpot(Immutable.Map({
                           mapData: Immutable.List(mapData),
-                          newVal: 2
+                          newVal: 'O'
                         }))
   // } else {
     // could they potentially trap us?
