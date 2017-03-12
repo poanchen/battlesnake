@@ -8,12 +8,16 @@ const DOWN = 'down'
 
 const HUNGRY_AT_HEALTH_OF = 50
 
-function getAllEnemiesHead(mySnake, otherSnakes) {
-  var enemiesHead = []
+function getAllEnemiesHead(otherSnakes) {
+  var enemiesHead = Immutable.List()
 
-  for (var i = 1; i < otherSnakes.length; i++) {
-      enemiesHead.push(otherSnakes[i].coords[0])
-  }
+  otherSnakes.map((eachSnake, index) => {
+    // make sure we do not include our own head
+    if (!index) {
+      return
+    }
+    enemiesHead = enemiesHead.push(eachSnake.getIn(['coords', 0]))
+  })
 
   return enemiesHead
 }
@@ -74,6 +78,12 @@ function initGrid(data) {
   var grid = Immutable.List(Array(data.get('height')).fill(null).map(
               () => Array(data.get('width')).fill(null).map(
                 () => 0))).toJS()
+
+  // simply return the empty width X height grid
+  // when the snakes is null
+  if (data.get('snakes') == null) {
+    return grid
+  }
 
   // make sure each snake's coord should be 1
   // for example,
@@ -183,24 +193,42 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     height: data.get('grid').height,
     snakes: data.get('otherSnakes')
   })), countForFirstMove, countForSecondMove
+  var emptyGrid = new pf.Grid(initGrid(Immutable.Map({
+    width: data.get('grid').width,
+    height: data.get('grid').height,
+    snakes: null
+  })))
 
-  // find a place where it is less snake and more spaces
-  // find the closest enemy
-  // var closestEnemyHead = findClosestFoodAndPath(
-  //                           data.otherSnakes[0].coords[0],
-  //                           getAllEnemiesHead(data.mySnake, data.otherSnakes),
-  //                           data.grid)
+  // find the closest enemy first
+  // assume that there is only one enemy that
+  // is closest to us
+  var closestEnemyHead = findClosestFoodAndPath(
+                            data.getIn(['otherSnakes', 0, 'coords', 0]),
+                            getAllEnemiesHead(data.get('otherSnakes')),
+                            emptyGrid).get('closestFood')
 
-  // try to see if they could trap us
-  // if (closestEnemyHead.closestFood === undefined && closestEnemyHead.shortestPath === undefined) {
-    // it seems like we are already trap?
-    // try to find the best way to go
+  var possibleMovesFromEnemy = getPossibleMove(Immutable.Map({
+    myHead: closestEnemyHead,
+    grid: data.get('grid')
+  }))
+  var safeSpotCounts = Immutable.List()
+
+  // think one step ahead of ourself by filling each
+  // enemies's possible move and count the safe spot
+  // based on our possible move
+  possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
+    mapData = initGrid(Immutable.Map({
+      width: data.get('grid').width,
+      height: data.get('grid').height,
+      snakes: data.get('otherSnakes')
+    }))
+
     floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
     countForFirstMove = countSafeSpot(Immutable.Map({
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
-
+    
     mapData = initGrid(Immutable.Map({
       width: data.get('grid').width,
       height: data.get('grid').height,
@@ -212,22 +240,78 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
                           mapData: Immutable.List(mapData),
                           newVal: 2
                         }))
-  // } else {
-    // could they potentially trap us?
-    // let's find out
-    // let's see if their next move would block us and eventually kill us
-    // make sure we are we (maybe this is a bug?)
-    // data.mySnake.id = data.otherSnakes[0].id
+    safeSpotCounts = safeSpotCounts.push([countForFirstMove, countForSecondMove])
+  })
 
-    // this should probably be another functions?
-    // for (var i = 0; i < data.otherSnakes.length; i++) {
-    //   if (
-    //     data.otherSnakes[i].coords[0][0] == closestEnemyHead[0] &&
-    //     data.otherSnakes[i].coords[0][1] == closestEnemyHead[1]
-    //   ) {
-    //     data.mySnake.id = data.otherSnakes[i].id
-    //   }
-    // }
+  var safeSpotCountsFromEnemies = Immutable.List()
+
+  // maybe make this as another function
+  possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
+    mapData = initGrid(Immutable.Map({
+      width: data.get('grid').width,
+      height: data.get('grid').height,
+      snakes: data.get('otherSnakes')
+    }))
+    // fill the enemy's next potential move
+    mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
+    
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
+    countForFirstMove = countSafeSpot(Immutable.Map({
+                          mapData: Immutable.List(mapData),
+                          newVal: 2
+                        }))
+    
+    mapData = initGrid(Immutable.Map({
+      width: data.get('grid').width,
+      height: data.get('grid').height,
+      snakes: data.get('otherSnakes')
+    }))
+    // fill the enemy's next potential move
+    mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
+
+    floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 2)
+    countForSecondMove = countSafeSpot(Immutable.Map({
+                          mapData: Immutable.List(mapData),
+                          newVal: 2
+                        }))
+    safeSpotCountsFromEnemies = safeSpotCountsFromEnemies.push([countForFirstMove, countForSecondMove])
+  })
+
+  var trappable = false, biggestSafeSpotCountDiff = 0, moveDiff = 0
+  
+  // try to see if others could potentially trap us
+  // by checking if the count for safe spot is the
+  // same regardless of their next move
+  safeSpotCountsFromEnemies.map((eachMove, index) => {
+    moveDiff = Math.abs(eachMove[0] - eachMove[1])
+    if (moveDiff <= 1) {
+      // if each of their move does not effect our
+      // count for safe spot, then I think it is
+      // safe to assume that they would not potentially
+      // trap us (at least one step ahead)
+    } else {
+      // since their next move does effect our count
+      // for safe spot, as a result, there is a potential
+      // that they could trap us
+      trappable = true
+      if (moveDiff > biggestSafeSpotCountDiff) {
+        biggestSafeSpotCountDiff = index
+      }
+    }
+  })
+
+  if (trappable) {
+    // they could trap us, lets see which way is better move
+    countForFirstMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[0]
+    countForSecondMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[1]
+  } else {
+    // they would not be able to trap us (at least one step ahead)
+    // simply pick the one that has the greatest count
+    countForFirstMove = safeSpotCounts.get(0)[0]
+    countForSecondMove = safeSpotCounts.get(0)[1]
+  }
+
+  // } else {
 
     // var possibleMovesFromEnemy = getPossibleMove(data)
     // var resultFromThePossibleMoves = [], c1, c2
@@ -326,6 +410,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     //   countForSecondMove = countSafeSpot(mapData, 2)
     // }
   // }
+  // find a place where it is less snake and more spaces
 
   return Immutable.Map({
     countForFirstMove: countForFirstMove,
