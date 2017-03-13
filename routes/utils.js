@@ -622,10 +622,23 @@ function findNextMove(data) {
           // and second move is smaller than third move
           // that means both first and second move are pretty bad
           // let's remove them
-          console.log(safeMoves)
-          safeMoves = safeMoves.delete(0)
-          safeMoves = safeMoves.delete(1)
-          console.log(safeMoves)
+          // but instead of removing the first and second
+          // Even better, we can simply keep the third one and that's it
+          switch(ptForEachMoves.keySeq().get(2)) {
+            case 'countForFirstMove':
+              safeMoves = safeMoves.get(0)
+              break
+            case 'countForSecondMove':
+              safeMoves = safeMoves.get(1)
+              break
+            case 'countForThirdMove':
+              safeMoves = safeMoves.get(2)
+              break
+            default:
+              // do nothing here
+              // should never come here at all
+              break
+          }
         }
       } else {
         // we do not remove this move since the count for move is the same with the second one
