@@ -622,8 +622,10 @@ function findNextMove(data) {
           // and second move is smaller than third move
           // that means both first and second move are pretty bad
           // let's remove them
+          console.log(safeMoves)
           safeMoves = safeMoves.delete(0)
           safeMoves = safeMoves.delete(1)
+          console.log(safeMoves)
         }
       } else {
         // we do not remove this move since the count for move is the same with the second one
