@@ -564,10 +564,6 @@ function findNextMove(data) {
                           grid: data.get('grid')
                         }))
 
-    console.log(isItDangerous.get('itIsOthersDangerousZone'))
-    console.log(isItDangerous.get('lengthOfOtherSnake'))
-    console.log(data.getIn(['otherSnakes', 0, 'coords']).size)
-
     if (isItDangerous.get('itIsOthersDangerousZone') &&
         isItDangerous.get('lengthOfOtherSnake') > data.getIn(['otherSnakes', 0, 'coords']).size) {
       // it is indeed dangerous because their length is longer than my snake
@@ -579,6 +575,10 @@ function findNextMove(data) {
       // add that move since it is safe
       safeMoves = safeMoves.push(eachPossibleMove)
       console.log("The move: " + eachPossibleMove + " is safe.")
+
+      if (isItDangerous.get('lengthOfOtherSnake') == data.getIn(['otherSnakes', 0, 'coords']).size) {
+        console.log("same length")
+      }
     }
   })
 
