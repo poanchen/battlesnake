@@ -614,8 +614,21 @@ function findNextMove(data) {
           break
       }
     } else {
-      // we do not remove this move since the count for move is the same with the second one
-      // that means there is not much differences between those two
+      if (safeMoves.size == 3) {
+        // there is a possibilities that the first and second move are both pretty bad
+        // let's check that
+        if (ptForEachMoves.get(ptForEachMoves.keySeq().get(1)) < ptForEachMoves.get(ptForEachMoves.keySeq().get(2))) {
+          // so first and second move are the same
+          // and second move is smaller than third move
+          // that means both first and second move are pretty bad
+          // let's remove them
+          safeMoves = safeMoves.delete(0)
+          safeMoves = safeMoves.delete(1)
+        }
+      } else {
+        // we do not remove this move since the count for move is the same with the second one
+        // that means there is not much differences between those two
+      }
     }
 
     console.log('we just did a flood fill alg')
