@@ -626,13 +626,13 @@ function findNextMove(data) {
           // Even better, we can simply keep the third one and that's it
           switch(ptForEachMoves.keySeq().get(2)) {
             case 'countForFirstMove':
-              safeMoves = safeMoves.get(0)
+              safeMoves = Immutable.List(safeMoves.get(0))
               break
             case 'countForSecondMove':
-              safeMoves = safeMoves.get(1)
+              safeMoves = Immutable.List(safeMoves.get(1))
               break
             case 'countForThirdMove':
-              safeMoves = safeMoves.get(2)
+              safeMoves = Immutable.List(safeMoves.get(2))
               break
             default:
               // do nothing here
