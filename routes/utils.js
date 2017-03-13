@@ -621,6 +621,24 @@ function findNextMove(data) {
           }
 
           safeMoves = Immutable.List([safeMoves])
+        } else {
+          // there should be a better way to do this?
+          // this happens when your count is 1, 50, 50
+          switch(ptForEachMoves.keySeq().get(0)) {
+            case 'countForFirstMove':
+              safeMoves = safeMoves.delete(0)
+              break
+            case 'countForSecondMove':
+              safeMoves = safeMoves.delete(1)
+              break
+            case 'countForThirdMove':
+              safeMoves = safeMoves.delete(2)
+              break
+            default:
+              // do nothing here
+              // should never come here at all
+              break
+          }
         }
       } else {
         switch(ptForEachMoves.keySeq().get(0)) {
