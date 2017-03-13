@@ -600,20 +600,44 @@ function findNextMove(data) {
 
     // make sure we remove the one with the smallest one (relatively dangerous move)
     if (ptForEachMoves.get(ptForEachMoves.keySeq().get(0)) < ptForEachMoves.get(ptForEachMoves.keySeq().get(1))) {
-      switch(ptForEachMoves.keySeq().get(0)) {
-        case 'countForFirstMove':
-          safeMoves = safeMoves.delete(0)
-          break
-        case 'countForSecondMove':
-          safeMoves = safeMoves.delete(1)
-          break
-        case 'countForThirdMove':
-          safeMoves = safeMoves.delete(2)
-          break
-        default:
-          // do nothing here
-          // should never come here at all
-          break
+      if (safeMoves.size == 3) {
+        // it is possible that first and second move are pretty bad but they are not the same
+        // then we need to make sure that we went with the biggest one
+        if (ptForEachMoves.get(ptForEachMoves.keySeq().get(1)) < ptForEachMoves.get(ptForEachMoves.keySeq().get(2))) {
+          switch(ptForEachMoves.keySeq().get(2)) {
+            case 'countForFirstMove':
+              safeMoves = safeMoves.get(0)
+              break
+            case 'countForSecondMove':
+              safeMoves = safeMoves.get(1)
+              break
+            case 'countForThirdMove':
+              safeMoves = safeMoves.get(2)
+              break
+            default:
+              // do nothing here
+              // should never come here at all
+              break
+          }
+
+          safeMoves = Immutable.List([safeMoves])
+        }
+      } else {
+        switch(ptForEachMoves.keySeq().get(0)) {
+          case 'countForFirstMove':
+            safeMoves = safeMoves.delete(0)
+            break
+          case 'countForSecondMove':
+            safeMoves = safeMoves.delete(1)
+            break
+          case 'countForThirdMove':
+            safeMoves = safeMoves.delete(2)
+            break
+          default:
+            // do nothing here
+            // should never come here at all
+            break
+        }
       }
     } else {
       if (safeMoves.size == 3) {
