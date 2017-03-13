@@ -7,6 +7,8 @@ const UP = 'up'
 const DOWN = 'down'
 
 const HUNGRY_AT_HEALTH_OF = 50
+const LONG_GAME = 1000
+const SAFTY_NET = 10
 
 function getAllEnemiesHead(otherSnakes) {
   var enemiesHead = Immutable.List()
@@ -654,7 +656,13 @@ function findNextMove(data) {
 
   // check if there is closest food and path
   if (data.get('closestFood') !== undefined && data.get('shortestPath') !== undefined) {
-    if (data.getIn(['otherSnakes', 0, 'health_points']) < HUNGRY_AT_HEALTH_OF) {
+    if ((data.getIn(['otherSnakes', 0, 'health_points']) < HUNGRY_AT_HEALTH_OF) ||
+      // when the game became long game, we need to make sure that we can get to the food before starving
+      // so we always make sure that we can get to the food until we ran out of healths
+      // this covers the use case that 
+      // when the closest food is longer than 50 turns, then we should go ahead and eat that instead of
+      // waiting till our health reaches 50, and we will likely be died before reaching the food
+      ((data.get('turn') > LONG_GAME) && (data.getIn(['otherSnakes', 0, 'health_points']) - SAFTY_NET <= data.get('shortestPath').size))) {
       // I think we are hungry and we should go ahead and eat some food
       // but before we go ahead, let's see if it is safe to do so
       for (var i = 0; i < safeMoves.size; i++) {
@@ -678,7 +686,7 @@ function findNextMove(data) {
   }
 
   console.log("possibleMoves: " + safeMoves)
-  
+
   return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(0))
 }
 

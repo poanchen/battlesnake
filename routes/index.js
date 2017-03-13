@@ -41,6 +41,7 @@ router.post(config.route.move, function (req, res) {
   return res.json(Immutable.Map({
     move: utils.findNextMove(Immutable.Map({
       grid: grid,
+      turn: body.get('turn'),
       mySnake: mySnake,
       otherSnakes: otherSnakes,
       closestFood: resultFromFindClosestFood.get('closestFood'),
