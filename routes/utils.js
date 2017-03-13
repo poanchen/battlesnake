@@ -8,7 +8,7 @@ const DOWN = 'down'
 
 const HUNGRY_AT_HEALTH_OF = 50
 const LONG_GAME = 1000
-const SAFTY_NET = 10
+const SAFTY_NET = 20
 
 function getAllEnemiesHead(otherSnakes) {
   var enemiesHead = Immutable.List()
