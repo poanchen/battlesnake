@@ -626,19 +626,21 @@ function findNextMove(data) {
           // Even better, we can simply keep the third one and that's it
           switch(ptForEachMoves.keySeq().get(2)) {
             case 'countForFirstMove':
-              safeMoves = Immutable.List(safeMoves.get(0))
+              safeMoves = safeMoves.get(0)
               break
             case 'countForSecondMove':
-              safeMoves = Immutable.List(safeMoves.get(1))
+              safeMoves = safeMoves.get(1)
               break
             case 'countForThirdMove':
-              safeMoves = Immutable.List(safeMoves.get(2))
+              safeMoves = safeMoves.get(2)
               break
             default:
               // do nothing here
               // should never come here at all
               break
           }
+
+          safeMoves = Immutable.List([safeMoves])
         }
       } else {
         // we do not remove this move since the count for move is the same with the second one
@@ -647,7 +649,7 @@ function findNextMove(data) {
     }
 
     console.log('we just did a flood fill alg')
-    console.log('result ' + safeMoves)
+    console.log('result: ' + safeMoves)
   }
 
   // check if there is closest food and path
@@ -676,7 +678,7 @@ function findNextMove(data) {
   }
 
   console.log("possibleMoves: " + safeMoves)
-
+  
   return getDirection(data.getIn(['otherSnakes', 0, 'coords', 0]).toJS(), safeMoves.get(0))
 }
 
