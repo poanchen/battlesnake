@@ -204,6 +204,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // find the closest enemy first
   // assume that there is only one enemy that
   // is closest to us
+  // To-do: more than one snake that is close to us?
   var closestEnemyHead = findClosestFoodAndPath(
                             data.getIn(['otherSnakes', 0, 'coords', 0]),
                             getAllEnemiesHead(data.get('otherSnakes')),
@@ -267,6 +268,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // think one step ahead of ourself by filling each
   // enemies's possible move and count the safe spot
   // based on our possible move
+  // To-do: think more than one step ahead?
   // maybe make this as another function
   possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
     mapData = initGrid(Immutable.Map({
@@ -274,7 +276,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
       height: data.get('grid').height,
       snakes: data.get('otherSnakes')
     }))
-    // fill the enemy's next potential move (maybe couple more might be a good idea?)
+    // fill the enemy's next potential move
     mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
     
     floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 0])[1], data.getIn(['nextPossibleMovesFromUs', 0])[0], 0, 2)
@@ -288,7 +290,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
       height: data.get('grid').height,
       snakes: data.get('otherSnakes')
     }))
-    // fill the enemy's next potential move (maybe couple more might be a good idea?)
+    // fill the enemy's next potential move
     mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
 
     floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 1])[1], data.getIn(['nextPossibleMovesFromUs', 1])[0], 0, 2)
@@ -304,7 +306,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
         height: data.get('grid').height,
         snakes: data.get('otherSnakes')
       }))
-      // fill the enemy's next potential move (maybe couple more might be a good idea?)
+      // fill the enemy's next potential move
       mapData[eachPossibleMoveFromEnemy[1]][eachPossibleMoveFromEnemy[0]] = 1
 
       floodFill(mapData, data.getIn(['nextPossibleMovesFromUs', 2])[1], data.getIn(['nextPossibleMovesFromUs', 2])[0], 0, 2)
@@ -340,6 +342,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
         // that they could trap us
         trappable = true
         if (moveDiff > biggestSafeSpotCountDiff) {
+          // making sure to save the worest case scenario
           biggestSafeSpotCountDiff = indexI
         }
       }
@@ -358,7 +361,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     }
   } else {
     // they would not be able to trap us (at least one step ahead)
-    // simply pick the one that has the greatest count
+    // To-do: think more than one step ahead?
     console.log('safeSpotCounts ' + safeSpotCounts)
     countForFirstMove = safeSpotCounts.get(0)[0]
     countForSecondMove = safeSpotCounts.get(0)[1]
@@ -367,7 +370,7 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
     }
   }
 
-  // find a place where it is less snake and more spaces?
+  // To-do: find a place where it is less snake and more spaces?
 
   if (data.getIn(['nextPossibleMovesFromUs']).size == 3) {
     return Immutable.Map({
@@ -438,16 +441,6 @@ function countSafeSpot(data) {
 }
 
 function findNextMove(data) {
-  // For example,
-  // [1, 1, 1, 1, 1, 1, 1, 1],
-  // [1, 0, 0, 0, 0, 0, 0, 1],
-  // [1, 0, 0, 0, 0, 0, 0, 1],
-  // [1, 0, M, T, G, G, 0, 1],
-  // [1, F, M, F, H, T, 0, 1],
-  // [1, 0, M, 0, 0, 0, 0, 1],
-  // [1, 0, M, 0, 0, 0, 0, 1],
-  // [1, 0, H, 0, 0, 0, 0, 1],
-  // [1, 1, 1, 1, 1, 1, 1, 1],
 
   // get all the possible moves first
   var possibleMoves = getPossibleMove(Immutable.Map({
@@ -470,22 +463,17 @@ function findNextMove(data) {
     if (isItDangerous.get('itIsOthersDangerousZone') &&
         isItDangerous.get('lengthOfOtherSnake') > data.getIn(['otherSnakes', 0, 'coords']).size) {
       // it is indeed dangerous because their length is longer than my snake
-      // or their length is same with us
-      // when both snake head on and their length is the same, both snake will die
-      // maybe add this case in the future?
+      // To-do: when their snake length is same with us, that is dangerous too
+      //        should try to avoid if possible
       console.log("The move: " + eachPossibleMove + " is dangerous!!!!!!!!!!")
     } else {
       // add that move since it is safe
       safeMoves = safeMoves.push(eachPossibleMove)
       console.log("The move: " + eachPossibleMove + " is safe.")
-
-      if (isItDangerous.get('lengthOfOtherSnake') == data.getIn(['otherSnakes', 0, 'coords']).size) {
-        console.log("same length")
-      }
     }
   })
 
-  console.log("after delete " + safeMoves)
+  console.log("deletion after checking dangerous zone: " + safeMoves)
 
   // Always use flood fill alg when we have
   // more than 2 possible moves left
@@ -586,6 +574,9 @@ function findNextMove(data) {
           }
 
           safeMoves = Immutable.List([safeMoves])
+        } else {
+          // we do not remove this move since the count for move is the same with the third one
+          // that means there is not much differences between those two
         }
       } else {
         // we do not remove this move since the count for move is the same with the second one
@@ -605,6 +596,7 @@ function findNextMove(data) {
       // this covers the use case that 
       // when the closest food is longer than 50 turns, then we should go ahead and eat that instead of
       // waiting till our health reaches 50, and we will likely be died before reaching the food
+      // maybe even do this, when it isn't a long game?
       ((data.get('turn') > LONG_GAME) && (data.getIn(['otherSnakes', 0, 'health_points']) - SAFTY_NET <= data.get('shortestPath').size))) {
       // I think we are hungry and we should go ahead and eat some food
       // but before we go ahead, let's see if it is safe to do so
