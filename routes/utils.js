@@ -7,7 +7,7 @@ const UP = 'up'
 const DOWN = 'down'
 
 const HUNGRY_AT_HEALTH_OF = 50
-const LONG_GAME = 1000
+// const LONG_GAME = 1000
 const SAFTY_NET = 20
 
 function getAllEnemiesHead(otherSnakes) {
@@ -332,8 +332,8 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   safeSpotCountsFromEnemies.map((eachMove, indexI) => {
     safeSpotCounts.toJS()[0].map((eachSpot, indexJ) => {
       moveDiff = Math.abs(eachMove[indexJ] - eachSpot)
-      console.log(eachMove[indexJ]+' - '+eachSpot)
-      console.log(moveDiff)
+      // console.log(eachMove[indexJ]+' - '+eachSpot)
+      // console.log(moveDiff)
       if (moveDiff <= 1) {
         // if each of their move does not effect our
         // count for safe spot, then I think it is
@@ -348,8 +348,8 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
           // making sure to save the worest case scenario
           biggestSafeSpotCountIndex = indexI
           biggestSafeSpotCountDiff = moveDiff
-          console.log(moveDiff+' has been diff')
-          console.log(indexI+' has been indexed')
+          // console.log(moveDiff+' has been diff')
+          // console.log(indexI+' has been indexed')
         }
       }
     })
@@ -603,7 +603,8 @@ function findNextMove(data) {
       // when the closest food is longer than 50 turns, then we should go ahead and eat that instead of
       // waiting till our health reaches 50, and we will likely be died before reaching the food
       // maybe even do this, when it isn't a long game?
-      ((data.get('turn') > LONG_GAME) && (data.getIn(['otherSnakes', 0, 'health_points']) - SAFTY_NET <= data.get('shortestPath').size))) {
+      (data.getIn(['otherSnakes', 0, 'health_points']) - SAFTY_NET <= data.get('shortestPath').size)) {
+      // ((data.get('turn') > LONG_GAME) && (data.getIn(['otherSnakes', 0, 'health_points']) - SAFTY_NET <= data.get('shortestPath').size))) {
       // I think we are hungry and we should go ahead and eat some food
       // but before we go ahead, let's see if it is safe to do so
       for (var i = 0; i < safeMoves.size; i++) {
