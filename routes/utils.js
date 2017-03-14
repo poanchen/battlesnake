@@ -204,7 +204,12 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // find the closest enemy first
   // assume that there is only one enemy that
   // is closest to us
-  // To-do: more than one snake that is close to us?
+  // To-do: find the closest enemy to the furtherest enemy and
+  // put them into a List, try to see anyone of them could potentially
+  // trap us then pick the best move based on that?
+  // still not sure if that is good idea
+  // this is assuming that everyone is aggressive
+  // but probably would be safer?
   var closestEnemyHead = findClosestFoodAndPath(
                             data.getIn(['otherSnakes', 0, 'coords', 0]),
                             getAllEnemiesHead(data.get('otherSnakes')),
@@ -268,7 +273,11 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // think one step ahead of ourself by filling each
   // enemies's possible move and count the safe spot
   // based on our possible move
-  // To-do: think more than one step ahead?
+  // To-do: calculate the straight line distance between their head
+  // to our head or body and check that many steps
+  // and see if they can potentially trap us?
+  // if they can trap us, try to run away as far as I can
+  // or pick the way that will give us more space
   // maybe make this as another function
   possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
     mapData = initGrid(Immutable.Map({
