@@ -329,10 +329,9 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
   // by checking if the count for safe spot is the
   // same regardless of their next move
   safeSpotCountsFromEnemies.map((eachMove, indexI) => {
-    console.log('i:'+indexI)
     safeSpotCounts.toJS()[0].map((eachSpot, indexJ) => {
       moveDiff = Math.abs(eachMove[indexJ] - eachSpot)
-      console.log('j:'+indexJ)
+      console.log(eachMove[indexJ]+' - '+eachSpot)
       console.log(moveDiff)
       if (moveDiff <= 1) {
         // if each of their move does not effect our
