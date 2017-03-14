@@ -323,7 +323,8 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
 
   console.log('safeSpotCountsFromEnemies ' + safeSpotCountsFromEnemies)
 
-  var trappable = false, biggestSafeSpotCountDiff = 0, moveDiff = 0
+  var trappable = false, biggestSafeSpotCountDiff = 0, moveDiff = 0,
+      biggestSafeSpotCountIndex = 0
   
   // try to see if others could potentially trap us
   // by checking if the count for safe spot is the
@@ -345,9 +346,10 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
         trappable = true
         if (moveDiff > biggestSafeSpotCountDiff) {
           // making sure to save the worest case scenario
-          biggestSafeSpotCountDiff = indexI
-          console.log(moveDiff+'has been indexed')
-          console.log(indexI+'has been indexed')
+          biggestSafeSpotCountIndex = indexI
+          biggestSafeSpotCountDiff = moveDiff
+          console.log(moveDiff+' has been diff')
+          console.log(indexI+' has been indexed')
         }
       }
     })
@@ -357,11 +359,11 @@ function useFloodFillAlgToDecideWhichWayIsBetter(data) {
 
   if (trappable) {
     // they could trap us, lets see which way is better move
-    console.log('worest safeSpotCounts ' + safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff))
-    countForFirstMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[0]
-    countForSecondMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[1]
-    if (safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff).length == 3) {
-      countForThirdMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountDiff)[2]
+    console.log('worest safeSpotCounts ' + safeSpotCountsFromEnemies.get(biggestSafeSpotCountIndex))
+    countForFirstMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountIndex)[0]
+    countForSecondMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountIndex)[1]
+    if (safeSpotCountsFromEnemies.get(biggestSafeSpotCountIndex).length == 3) {
+      countForThirdMove = safeSpotCountsFromEnemies.get(biggestSafeSpotCountIndex)[2]
     }
   } else {
     // they would not be able to trap us (at least one step ahead)
