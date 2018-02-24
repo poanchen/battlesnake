@@ -19,7 +19,7 @@ router.post(config.route.start, function (req, res) {
 router.post(config.route.move, function (req, res) {
   var body = Immutable.fromJS(req.body)
   var mySnake = Immutable.Map({
-    id: body.get('you')
+    you: body.get('you')
   })
   var otherSnakes = body.get('snakes')
   var food = body.get('food')
@@ -30,7 +30,7 @@ router.post(config.route.move, function (req, res) {
   })))
 
   var resultFromFindClosestFood = utils.findClosestFoodAndPath(
-    otherSnakes.getIn([0, 'coords', 0]), food, grid)
+    mySnake.getIn(['you', 'body', 'data', 0]), food, grid)
 
   // console.log(utils.initGrid(Immutable.Map({
   //   width: body.get('width'),
