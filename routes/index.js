@@ -9,7 +9,7 @@ var Immutable = require('immutable')
 router.post(config.route.start, function (req, res) {
   return res.json(Immutable.Map({
     color: config.snake.color,
-    name: config.snake.name,
+    secondary_color: config.snake.secondary_color,
     head_url: config.snake.head_url,
     taunt: config.snake.taunt.start
   }).toJSON())

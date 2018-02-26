@@ -1,20 +1,20 @@
 {
-  "host": "localhost",
-  "port": 5000,
-  "route": {
-    "start": "/start",
-    "move": "/move"
+  "host" : "localhost",
+  "port" : 5000,
+  "route" : {
+    "start" : "/start",
+    "move" : "/move"
   },
   "snake" : {
-    "id" : "0",
-    "name": "PPAP",
-    "color": "#000000",
-    "head_url": "http://vignette2.wikia.nocookie.net/central/images/d/de/One_Piece_logo.png/revision/latest?cb=20160220025555",
-    "head_type": "tongue",
-    "tail_type": "skinny-tail",
-    "taunt": {
-      "move": "Pen-Pineapple-Apple-Pen!",
-      "start": "I have a pen~ I have an apple~"
-    }
+    "color" : "#000000",
+    "secondary_color" : "#00FF00",
+    "head_url" : "https://vignette2.wikia.nocookie.net/central/images/d/de/One_Piece_logo.png",
+    "name" : "Monkey D. Luffy",
+    "taunt" : {
+      "start" : "I'M GOING TO BE THE PIRATE KING!",
+      "move" : "I WANT TO EAT MEAT!"
+    },
+    "head_type" : "tongue",
+    "tail_type" : "skinny-tail"
   }
 }
