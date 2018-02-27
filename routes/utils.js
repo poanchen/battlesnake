@@ -6,6 +6,10 @@ const LEFT = 'left'
 const UP = 'up'
 const DOWN = 'down'
 
+// Grid
+const SNAKE_BODY = 1
+// const FOOD = 2
+
 const HUNGRY_AT_HEALTH_OF = 50
 // const LONG_GAME = 1000
 const SAFTY_NET = 20
@@ -26,21 +30,24 @@ function getAllEnemiesHead(otherSnakes, mySnakeId) {
   })
 }
 
-function findClosestFoodAndPath(myHead, food, grid) {
+function findShortestPathToAPosition(from, to, grid) {
+  const finder = new pf.AStarFinder()
+  return finder.findPath(
+    from.get('y'),
+    from.get('x'),
+    to.get('y'),
+    to.get('x'),
+    grid
+  )
+}
+
+function findClosestFoodAndPath(head, foods, grid) {
   const finder = new pf.AStarFinder()
   var originalGrid = grid.clone()
   var shortestPath, path
   var closestFood, closestFoodLength = 100000
-
-  food.get('data').map(eachFood => {
-    path = finder.findPath(
-      myHead.get('x'),
-      myHead.get('y'),
-      eachFood.get('x'),
-      eachFood.get('y'),
-      grid
-    )
-
+  foods.map(eachFood => {
+    path = findShortestPathToAPosition(head, eachFood, grid)
     if (path.length < closestFoodLength && path.length != 0) {
       shortestPath = path
       closestFoodLength = path.length
@@ -48,7 +55,6 @@ function findClosestFoodAndPath(myHead, food, grid) {
     }
     grid = originalGrid.clone()
   })
-
   return Immutable.Map({
     shortestPath: Immutable.List(shortestPath),
     closestFood: closestFood
@@ -70,42 +76,42 @@ function getDirection(from, to) {
   }
 }
 
-function initGrid(data) {
-  // create a height x width empty array
-  // for example,
+function initGrid(width, height, snakes, foods) {
+  // Create a h * w 2D array (filled with zero)
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
   // 0 0 0 0 0 0 0 0
-  var grid = Immutable.List(Array(data.get('height')).fill(null).map(
-              () => Array(data.get('width')).fill(null).map(
-                () => 0))).toJS()
+  // The above example are for grid with height of 6 and width of 8.
+  var grid = Array(height).fill(null).map(
+    () => Array(width).fill(null).map(
+      () => 0))
 
-  // simply return the empty width X height grid
-  // when the snakes is null
-  if (data.getIn(['snakes', 'data']) == null) {
+  // simply return the empty h * w grid when the snakes is null
+  if (snakes == null || snakes.size == 0) {
     return grid
   }
 
-  // make sure each snake's coord should be 1
-  // for example,
+  // Make sure each snake's body position should be SNAKE_BODY 
+  // For example,
+  // 0 1 0 0 0 0 1 0
   // 0 0 0 0 0 0 0 0
-  // 0 0 0 1 0 0 0 1
-  // 0 0 0 1 1 0 0 1
-  // 1 1 0 1 1 0 0 0
-  // 0 1 0 0 0 0 1 1
-  // 0 0 0 0 0 0 1 1
-  for (var i = 0; i < data.getIn(['snakes', 'data']).size; i++) {
-    for (var j = 0; j < data.getIn(['snakes', 'data', i, 'body', 'data']).size; j++) {
-      grid = Immutable.fromJS(grid).setIn([
-          data.getIn(['snakes', 'data', i, 'body', 'data', j, 'y']),
-          data.getIn(['snakes', 'data', i, 'body', 'data', j, 'x'])], 1)
-    }
-  }
-
-  return grid.toJS()
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  // 0 0 0 0 0 0 0 0
+  // 0 1 0 0 0 0 1 0
+  snakes.map(eachSnake => {
+    eachSnake.getIn(['body', 'data']).map(eachSnakeBody => {
+      grid[eachSnakeBody.get('y')][eachSnakeBody.get('x')] = SNAKE_BODY;
+    })
+  })
+  // and food should be FOOD
+  // foods.map(eachFood => {
+  //   grid[eachFood.get('y')][eachFood.get('x')] = FOOD;
+  // })
+  return grid
 }
 
 function getPossibleMove(data) {
@@ -171,7 +177,7 @@ function checkIfItIsOthersDangerousZone(data) {
 
   data.getIn(['otherSnakes', 'data']).map(eachSnake => {
     possibleMovesFromEnemy = getPossibleMove(Immutable.Map({
-                                myHead: data.get('myHead'),
+                                myHead: data.get('myHead'),// wrong
                                 grid: data.get('grid')
                              }))
     possibleMovesFromEnemy.map(eachPossibleMoveFromEnemy => {
@@ -457,8 +463,7 @@ function countSafeSpot(data) {
   return sum
 }
 
-function findNextMove(data) {
-
+function findNextLeastDangerousMove(data) {
   // get all the possible moves first
   var possibleMoves = getPossibleMove(Immutable.Map({
     myHead: data.getIn(['mySnake', 'you', 'body', 'data', 0]),
@@ -659,5 +664,5 @@ module.exports = {
   checkIfItIsOthersDangerousZone: checkIfItIsOthersDangerousZone,
   useFloodFillAlgToDecideWhichWayIsBetter: useFloodFillAlgToDecideWhichWayIsBetter,
   getPossibleMove: getPossibleMove,
-  findNextMove: findNextMove
+  findNextLeastDangerousMove: findNextLeastDangerousMove
 }

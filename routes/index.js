@@ -18,36 +18,25 @@ router.post(config.route.start, function (req, res) {
 // Handle POST request to '/move'
 router.post(config.route.move, function (req, res) {
   var body = Immutable.fromJS(req.body)
-  var mySnake = Immutable.Map({
-    you: body.get('you')
-  })
-  var otherSnakes = body.get('snakes')
-  var food = body.get('food')
-  var grid = new pf.Grid(utils.initGrid(Immutable.Map({
-    width: body.get('width'),
-    height: body.get('height'),
-    snakes: otherSnakes
-  })))
-
-  var resultFromFindClosestFood = utils.findClosestFoodAndPath(
-    mySnake.getIn(['you', 'body', 'data', 0]), food, grid)
-
-  // console.log(utils.initGrid(Immutable.Map({
-  //   width: body.get('width'),
-  //   height: body.get('height'),
-  //   snakes: otherSnakes
-  // })))
-
+  var grid = new pf.Grid(
+    utils.initGrid(
+      body.get('width'),
+      body.get('height'),
+      body.getIn(['snakes', 'data']),
+      body.getIn(['food', 'data'])
+    )
+  )
+  var closestFoodAndPath = utils.findClosestFoodAndPath(
+    body.getIn(['you', 'body', 'data', 0]), body.getIn(['food', 'data']), grid)
   return res.json(Immutable.Map({
-    move: utils.findNextMove(Immutable.Map({
+    move: utils.findNextLeastDangerousMove(Immutable.Map({
       grid: grid,
       turn: body.get('turn'),
-      mySnake: mySnake,
-      otherSnakes: otherSnakes,
-      closestFood: resultFromFindClosestFood.get('closestFood'),
-      shortestPath: resultFromFindClosestFood.get('shortestPath')
-    })),
-    taunt: config.snake.taunt.move
+      mySnake: body,
+      otherSnakes: body.get('snakes'),
+      closestFood: closestFoodAndPath.get('closestFood'),
+      shortestPath: closestFoodAndPath.get('shortestPath')
+    }))
   }).toJSON())
 })
 
