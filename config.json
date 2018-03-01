@@ -16,5 +16,14 @@
     },
     "head_type" : "tongue",
     "tail_type" : "skinny-tail"
+  },
+  "grid" : {
+    "snake_body" : 1
+  },
+  "direction" : {
+    "up" : "up",
+    "down" : "down",
+    "right" : "right",
+    "left" : "left"
   }
 }
