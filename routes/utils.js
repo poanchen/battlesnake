@@ -59,37 +59,112 @@ function getDirection(from, to) {
   }
 }
 
-function fillOtherSnakesInMultipleSteps() {
-
+function fillOtherSnakesInMultipleSteps(steps, head, grid) {
+  var possibleMoves = getPossibleMoves(head, new pf.Grid(grid))
+  if(possibleMoves.size == 0 || steps == 0) return;
+  possibleMoves.map(eachMove => {
+    grid[eachMove[1]][eachMove[0]] = SNAKE_BODY;
+    fillOtherSnakesInMultipleSteps(steps - 1, Immutable.Map({x : eachMove[0], y : eachMove[1]}), grid)
+  })
 }
 
-function testThreeStepsAheadRecursively() {
+function testThreeStepsAheadRecursively(steps, head, grid) {
   // if dumb move found, we exculde that move at all to optimized in some situation
   // when the move has no food, make sure we also remove our own tail
+  // var possibleMoves = getPossibleMoves(head, new pf.Grid(grid))
+  // if(possibleMoves.size == 0 || steps == 0) return;
+  // possibleMoves.map(eachMove => {
+  //   grid[eachMove[1]][eachMove[0]] = SNAKE_BODY;
+  //   fillOtherSnakesInMultipleSteps(steps - 1, Immutable.Map({x : eachMove[0], y : eachMove[1]}), grid)
+  // })
 }
 
 function getNewHead(head, direction) {
   switch(direction) {
     case config.direction.left:
-      head[0]--
+      head = head.set('x', head.get('x') - 1)
       break
     case config.direction.right:
-      head[0]++
+      head = head.set('x', head.get('x') + 1)
       break
     case config.direction.up:
-      head[1]--
+      head = head.set('y', head.get('y') - 1)
       break
     case config.direction.down:
-      head[1]++
+      head = head.set('y', head.get('y') + 1)
       break
   }
   return head
 }
 
+function getPossibleMoves(head, grid) {
+  var possibleMoves = Immutable.List()
+  if (
+    head.get('y') + 1 >= 0 &&
+    head.get('y') + 1 < grid.height &&
+    grid.nodes[head.get('y') + 1][head.get('x')].walkable
+  ) {
+    // check if down is possible
+    // console.log("down is possible")
+    // console.log("x", head.get('y') + 1)
+    // console.log("y", head.get('x'))
+    possibleMoves = possibleMoves.push([head.get('x'), head.get('y') + 1])
+  }
+  if (
+    head.get('x') + 1 >= 0 &&
+    head.get('x') + 1 < grid.width &&
+    grid.nodes[head.get('y')][head.get('x') + 1].walkable
+  ) {
+    // check if right is possible
+    // console.log("right is possible")
+    // console.log("x", head.get('y'))
+    // console.log("y", head.get('x') + 1)
+    possibleMoves = possibleMoves.push([head.get('x') + 1, head.get('y')])
+  }
+  if (
+    head.get('y') - 1 >= 0 &&
+    head.get('y') - 1 < grid.height &&
+    grid.nodes[head.get('y') - 1][head.get('x')].walkable
+  ) {
+    // check if up is possible
+    // console.log("up is possible")
+    // console.log("x", head.get('y') - 1)
+    // console.log("y", head.get('x'))
+    possibleMoves = possibleMoves.push([head.get('x'), head.get('y') - 1])
+  }
+  if (
+    head.get('x') - 1 >= 0 &&
+    head.get('x') - 1 < grid.width &&
+    grid.nodes[head.get('y')][head.get('x') - 1].walkable
+  ) {
+    // check for left
+    // console.log("left is possible")
+    // console.log("x", head.get('y'))
+    // console.log("y", head.get('x') - 1)
+    possibleMoves = possibleMoves.push([head.get('x') - 1, head.get('y')])
+  }
+  return possibleMoves
+}
+
+function getAllEnemiesHead(snakes, mySnakeId) {
+  var enemiesHead = Immutable.List()
+  snakes.map(eachSnake => {
+    // make sure we do not include our own head
+    if (eachSnake.get('id') == mySnakeId) {
+      return
+    }
+    enemiesHead = enemiesHead.push(eachSnake.getIn(['body', 'data', 0]))
+  })
+  return enemiesHead
+}
+
 function findNextLeastDangerousMove(grid, mySnake, snakes, foods) {
+  enemiesHead = getAllEnemiesHead(snakes, mySnake.get('id'))
   Immutable.fromJS([3, 2, 1, 0]).map(i => {
-    // fillOtherSnakesInMultipleSteps(i)
-    // testThreeStepsAheadRecursively()
+    enemiesHead.map(eachEnemyHead =>{
+      fillOtherSnakesInMultipleSteps(i, eachEnemyHead, grid)
+    })
+    testThreeStepsAheadRecursively(3, mySnake.getIn(['body', 'data', 0]), grid)
   })
   // Are we hungry?
     // go food route
@@ -116,5 +191,7 @@ module.exports = {
   fillOtherSnakesInMultipleSteps : fillOtherSnakesInMultipleSteps,
   testThreeStepsAheadRecursively : testThreeStepsAheadRecursively,
   getNewHead : getNewHead,
+  getPossibleMoves : getPossibleMoves,
+  getAllEnemiesHead : getAllEnemiesHead,
   findNextLeastDangerousMove : findNextLeastDangerousMove
 }

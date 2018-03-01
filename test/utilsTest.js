@@ -26,7 +26,7 @@ var config = require('../config.json')
 // 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 // 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 // F 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 F
-const snakes = Immutable.fromJS([
+var snakes = Immutable.fromJS([
   {
     "taunt" : "git gud",
     "name" : "M",
@@ -172,10 +172,10 @@ describe('Testing the functions in utils', function() {
   }),
   describe('#getNewHead()', function() {
     it("should return a new position given head, direction", function() {
-      assert.deepEqual(utils.getNewHead([6, 9], config.direction.left), [5,9])
-      assert.deepEqual(utils.getNewHead([6, 9], config.direction.right), [7,9])
-      assert.deepEqual(utils.getNewHead([6, 9], config.direction.down), [6,10])
-      assert.deepEqual(utils.getNewHead([6, 9], config.direction.up), [6,8])
+      assert.deepEqual(utils.getNewHead(Immutable.Map({x : 6, y : 9}), config.direction.left).toJS(), Immutable.Map({x : 5, y : 9}).toJS())
+      assert.deepEqual(utils.getNewHead(Immutable.Map({x : 6, y : 9}), config.direction.right).toJS(), Immutable.Map({x : 7, y : 9}).toJS())
+      assert.deepEqual(utils.getNewHead(Immutable.Map({x : 6, y : 9}), config.direction.down).toJS(), Immutable.Map({x : 6, y : 10}).toJS())
+      assert.deepEqual(utils.getNewHead(Immutable.Map({x : 6, y : 9}), config.direction.up).toJS(), Immutable.Map({x : 6, y : 8}).toJS())
     })
   })
 })

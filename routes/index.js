@@ -20,7 +20,7 @@ router.post(config.route.move, function (req, res) {
   var body = Immutable.fromJS(req.body)
   var mySnake = body.get('you')
   var snakes = body.getIn(['snakes', 'data'])
-  var grid = new pf.Grid(utils.initGrid(body.get('width'), body.get('height'), snakes))
+  var grid = utils.initGrid(body.get('width'), body.get('height'), snakes)
   return res.json(Immutable.Map({
     move: utils.findNextLeastDangerousMove(grid, mySnake, snakes, body.getIn(['food', 'data']))
   }).toJSON())
