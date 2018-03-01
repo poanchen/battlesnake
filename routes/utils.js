@@ -69,7 +69,7 @@ function testThreeStepsAheadRecursively() {
 }
 
 function getNewHead(head, direction) {
-  switch(direction){
+  switch(direction) {
     case config.direction.left:
       head[0]--
       break
