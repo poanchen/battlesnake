@@ -60,11 +60,30 @@ function getDirection(from, to) {
 }
 
 function fillOtherSnakesInMultipleSteps() {
+
 }
 
 function testThreeStepsAheadRecursively() {
   // if dumb move found, we exculde that move at all to optimized in some situation
   // when the move has no food, make sure we also remove our own tail
+}
+
+function getNewHead(head, direction) {
+  switch(direction){
+    case config.direction.left:
+      head[0]--
+      break
+    case config.direction.right:
+      head[0]++
+      break
+    case config.direction.up:
+      head[1]--
+      break
+    case config.direction.down:
+      head[1]++
+      break
+  }
+  return head
 }
 
 function findNextLeastDangerousMove(grid, mySnake, snakes, foods) {
@@ -96,5 +115,6 @@ module.exports = {
   getDirection : getDirection,
   fillOtherSnakesInMultipleSteps : fillOtherSnakesInMultipleSteps,
   testThreeStepsAheadRecursively : testThreeStepsAheadRecursively,
+  getNewHead : getNewHead,
   findNextLeastDangerousMove : findNextLeastDangerousMove
 }

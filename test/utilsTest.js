@@ -169,5 +169,13 @@ describe('Testing the functions in utils', function() {
       assert.equal(utils.getDirection([5, 5], [5, 4]), config.direction.up)
       assert.equal(utils.getDirection([5, 5], [4, 5]), config.direction.left)
     })
+  }),
+  describe('#getNewHead()', function() {
+    it("should return a new position given head, direction", function() {
+      assert.deepEqual(utils.getNewHead([6, 9], config.direction.left), [5,9])
+      assert.deepEqual(utils.getNewHead([6, 9], config.direction.right), [7,9])
+      assert.deepEqual(utils.getNewHead([6, 9], config.direction.down), [6,10])
+      assert.deepEqual(utils.getNewHead([6, 9], config.direction.up), [6,8])
+    })
   })
 })
