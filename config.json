@@ -18,12 +18,15 @@
     "tail_type" : "skinny-tail"
   },
   "grid" : {
-    "snake_body" : 1
+    "snake_body" : 1,
+    "flood_fill_new_value" : 2
   },
   "direction" : {
     "up" : "up",
     "down" : "down",
     "right" : "right",
     "left" : "left"
-  }
+  },
+  "steps_ahead" : 2,
+  "hungry_point" : 40
 }
