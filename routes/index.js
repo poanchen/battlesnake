@@ -21,9 +21,17 @@ router.post(config.route.move, function (req, res) {
   var mySnake = body.get('you')
   var snakes = body.getIn(['snakes', 'data'])
   var grid = utils.initGrid(body.get('width'), body.get('height'), snakes)
+  var leastDangerousMove = utils.findNextLeastDangerousMove(grid, mySnake, snakes, body.getIn(['food', 'data']), body.get('turn'))
   return res.json(Immutable.Map({
-    move: utils.findNextLeastDangerousMove(grid, mySnake, snakes, body.getIn(['food', 'data']))
+    move : leastDangerousMove,
+    taunt : config.snake.taunt.move + " Let's go " + leastDangerousMove + "!!!"
   }).toJSON())
+})
+
+// Handle POST request to '/end'
+router.post(config.route.end, function (req, res) {
+  res.status(200)
+  res.end()
 })
 
 module.exports = router

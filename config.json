@@ -3,7 +3,8 @@
   "port" : 5000,
   "route" : {
     "start" : "/start",
-    "move" : "/move"
+    "move" : "/move",
+    "end" : "/end"
   },
   "snake" : {
     "color" : "#000000",
@@ -28,5 +29,8 @@
     "left" : "left"
   },
   "steps_ahead" : 2,
-  "hungry_point" : 40
+  "closest_food_max_distance" : 10,
+  "hungry_point" : 40,
+  "full_health" : 100,
+  "critical_health_differences" : 10
 }
