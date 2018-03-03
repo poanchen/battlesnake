@@ -408,7 +408,7 @@ function tryToGetToOurOwnTailIfNotPossibleThenOthers(snakes, mySnake, grid, turn
     i++
   }
   if(shortestPathToTail != undefined && shortestPathToTail.size > 0) {
-    console.log('trying the shortest path to the tail [' + [tail.x, tail.y] + ']')
+    // console.log('trying the shortest path to the tail [' + [tail.x, tail.y] + ']')
     return getDirection([mySnake.getIn(['body', 'data', 0]).get('x'), mySnake.getIn(['body', 'data', 0]).get('y')],
         shortestPathToTail.get(1))
   }
@@ -467,7 +467,7 @@ function findNextLeastDangerousMove(grid, mySnake, snakes, foods, turn) {
     testMultipleStepsAheadRecursively(STEPSAHEAD, mySnake.getIn(['body', 'data', 0]), grid, floodFillResults, 0, ORIGINAL_CALL, i--, getItsTail(mySnake.getIn(['body', 'data']).toJS()), foodsSet)
     grid = JSON.parse(JSON.stringify(originalGrid))
   }
-  console.log(floodFillResults)
+  // console.log(floodFillResults)
   var closestFoodListFromOurHead = rankFoodClosenessFromHead(mySnake.getIn(['body', 'data', 0]), foods, grid)
   var closestFoodPath = findFoodThatIsClosestToUs(enemiesHead, closestFoodListFromOurHead, grid, foods)
   var closestFoodDistance = CLOSEST_FOOD_MAX_DISTANCE
@@ -476,13 +476,13 @@ function findNextLeastDangerousMove(grid, mySnake, snakes, foods, turn) {
   // always try to maintain closest food to us within range like CLOSEST_FOOD_MAX_DISTANCE
   // Are we hungry? or closest food to us is too far
   if(closestFoodDistance > CLOSEST_FOOD_MAX_DISTANCE || mySnake.get('health') < HUNGRY_POINT) {
-    if(closestFoodDistance > CLOSEST_FOOD_MAX_DISTANCE) console.log('trying to keep certain distance to closest foods!!!')
+    // if(closestFoodDistance > CLOSEST_FOOD_MAX_DISTANCE) console.log('trying to keep certain distance to closest foods!!!')
     // go food route
     // are we in critical health mode?
     // if we are just go ahead
     if(mySnake.get('health') < grid.length + CRITICAL_HEALTH_DIFFERENCES &&
       closestFoodListFromOurHead != undefined && closestFoodListFromOurHead.size != 0) {
-      console.log('we are critically hungry, just go ahead')
+      // console.log('we are critically hungry, just go ahead')
       // duplicate code for now
       bestDirectionFromFoodPath = getDirection(
         [mySnake.getIn(['body', 'data', 0]).get('x'), mySnake.getIn(['body', 'data', 0]).get('y')],
@@ -511,12 +511,12 @@ function findNextLeastDangerousMove(grid, mySnake, snakes, foods, turn) {
         // simply go there if we are still the cloest to get to (return)
       // else simply go as safe (return)
     } else {
-      console.log('we are hungry but no route to the food that is closest to us')
+      // console.log('we are hungry but no route to the food that is closest to us')
       // can we get to any food at all?
       if(closestFoodListFromOurHead.size > 0) {
         // yes we can
         // head over to food with the longest route and hope that there will be food spawed (return)
-        console.log('let head over to that food with longest route')
+        // console.log('let head over to that food with longest route')
         // return
       }
     }
