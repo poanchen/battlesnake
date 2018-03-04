@@ -1,4 +1,4 @@
-## Rough strategist
+## Rough strategy
 
 We first go by filling each enemy's head by one step (all their possible move) and we recursively check its flood fill value three
 times in default, and then we do it again by two steps for the enemy's head. Lastly, three steps. Once we done all that recursion.
