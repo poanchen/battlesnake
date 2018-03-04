@@ -33,6 +33,12 @@ their move might be.
 So that when the potential-head-on situation happen, we will not get kill.
 - Put in some agressive move when we can in order to finish the gamer quickly?
 
+## Live game played during BattleSnake 2018
+- [Battlesnake 2018 Live game played](https://www.twitch.tv/videos/234961139?t=02h12m20s) (Our team was the Team One Piece)
+
+Note: Sadly, we did not enter the semi-final for the intermediate bracket at the end. However, we were doing pretty well 
+with just two of us left in the game.
+
 # battlesnake-node(js)
 
 A simple [BattleSnake AI](http://battlesnake.io) written in Javascript for NodeJS.
