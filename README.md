@@ -34,6 +34,8 @@ So that when the potential-head-on situation happen, we will not get kill.
 - Put in some agressive move when we can in order to finish the gamer quickly?
 - In some cases, it might be good idea to trace our own tail. Otherwise, it might sometimes be better idea to trace someone's tail. This
 should be more deterministic. Right now, it simply just grab the first tail from snakes array and trace on!
+- Implement Voronoi Analysis to allow our snake to have more space to reduce chances of getting trap. (https://github.com/nbw/battlesnake_crystal)
+
 ## Live game played during BattleSnake 2018
 - [Battlesnake 2018 Live game played](https://www.twitch.tv/videos/234961139?t=02h12m20s) (Our team was the Team One Piece)
 
