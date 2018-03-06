@@ -1,3 +1,12 @@
+## Rough strategy
+
+Find the shortest path to the food using A* and go for it. If our snake cannot get to any food, we simply just do random move till we die or food appears that we can get to.
+
+## Live game played during BattleSnake 2017
+- [Battlesnake 2017 Live game played](https://youtu.be/m4DN9CgTB64) (Our team was the PPAP snake)
+
+Note: We passed the first round and went into the semi-final. However, there were a point where no food route is found. We then did a random move which caused us to run into other snakes body.
+
 # battlesnake-node(js)
 
 A simple [BattleSnake AI](http://battlesnake.io) written in Javascript for NodeJS.
