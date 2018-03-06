@@ -1,11 +1,13 @@
 ## Rough strategy
 
-Find the shortest path to the food using A* and go for it. If our snake cannot get to any food, we simply just do random move till we die or food appears that we can get to.
+Depends on the turn, we always circle ourself, 2 steps to the right, 2 steps to the down, 2 steps to the left, and 2 steps to the up. If
+we get lucky, we might survive a bit by eating food along the way. Otherwise, we will starve to death.
 
-## Live game played during BattleSnake 2017
-- [Battlesnake 2017 Live game played](https://youtu.be/m4DN9CgTB64) (Our team was the Pen-Pineapple-Pen snake)
+## Live game played during BattleSnake 2016
+- [Battlesnake 2016 Live game played](https://youtu.be/qp_tZ3gKv3Q) (Our team was the green snake that keeps circling)
 
-Note: We passed the first round and went into the semi-final. However, there were a point where no food route is found. We then did a random move which caused us to run into other snakes body.
+Note: We did not pass the first round. However, we got lucky and ate some food along the way, so we did not die starve to death. We did
+ran into someone through since we did not have any collision detection.
 
 # battlesnake-node(js)
 
