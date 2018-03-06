@@ -3,35 +3,50 @@ var router  = express.Router()
 var config = require('../config.json')
 var pf = require('pathfinding')
 var utils = require('./utils')
-var Immutable = require('immutable')
 
 // Handle POST request to '/start'
 router.post(config.route.start, function (req, res) {
-  return res.json(Immutable.Map({
-    color : config.snake.color,
-    secondary_color : config.snake.secondary_color,
-    head_url : config.snake.head_url,
-    taunt : config.snake.taunt.start
-  }).toJSON())
+
+  return res.json({
+    color: config.snake.color,
+    name: config.snake.name,
+    head_url: config.snake.head_url,
+    head_type: config.snake.head_type,
+    tail_type: config.snake.tail_type,
+    taunt: config.snake.taunt.start
+  })
 })
 
 // Handle POST request to '/move'
 router.post(config.route.move, function (req, res) {
-  var body = Immutable.fromJS(req.body)
-  var mySnake = body.get('you')
-  var snakes = body.getIn(['snakes', 'data'])
-  var grid = utils.initGrid(body.get('width'), body.get('height'), snakes)
-  var leastDangerousMove = utils.findNextLeastDangerousMove(grid, mySnake, snakes, body.getIn(['food', 'data']), body.get('turn'))
-  return res.json(Immutable.Map({
-    move : leastDangerousMove,
-    taunt : config.snake.taunt.move + " Let's go " + leastDangerousMove + "!!!"
-  }).toJSON())
-})
+  var body = req.body
+  var mySnake = {
+    id: body.you
+  }
+  var otherSnakes = body.snakes
+  var food = body.food
+  var nextMove = 'up'
+  var grid = utils.initGrid({
+    width: body.width,
+    height: body.height,
+    snakes: otherSnakes
+  })
 
-// Handle POST request to '/end'
-router.post(config.route.end, function (req, res) {
-  res.status(200)
-  res.end()
+  var resultFromFindClosestFood = utils.findClosestFoodAndPath(
+    utils.findHead(mySnake, otherSnakes), food, new pf.Grid(grid))
+
+  nextMove = utils.findNextMove({
+    grid: grid,
+    mySnake: mySnake,
+    otherSnakes: otherSnakes,
+    closestFood: resultFromFindClosestFood.closestFood,
+    shortestPath: resultFromFindClosestFood.shortestPath
+  })
+
+  return res.json({
+    move: nextMove,
+    taunt: config.snake.taunt.move
+  })
 })
 
 module.exports = router

@@ -1,36 +1,20 @@
 {
-  "host" : "localhost",
-  "port" : 5000,
-  "route" : {
-    "start" : "/start",
-    "move" : "/move",
-    "end" : "/end"
+  "host": "localhost",
+  "port": 5000,
+  "route": {
+    "start": "/start",
+    "move": "/move"
   },
   "snake" : {
-    "color" : "#000000",
-    "secondary_color" : "#00FF00",
-    "head_url" : "https://vignette2.wikia.nocookie.net/central/images/d/de/One_Piece_logo.png",
-    "name" : "Monkey D. Luffy",
-    "taunt" : {
-      "start" : "I'M GOING TO BE THE PIRATE KING!",
-      "move" : "I WANT TO EAT MEAT!"
-    },
-    "head_type" : "tongue",
-    "tail_type" : "skinny-tail"
-  },
-  "grid" : {
-    "snake_body" : 1,
-    "flood_fill_new_value" : 2
-  },
-  "direction" : {
-    "up" : "up",
-    "down" : "down",
-    "right" : "right",
-    "left" : "left"
-  },
-  "steps_ahead" : 2,
-  "closest_food_max_distance" : 10,
-  "hungry_point" : 40,
-  "full_health" : 100,
-  "critical_health_differences" : 10
+    "id" : "0",
+    "name": "PPAP",
+    "color": "#DFFF00",
+    "head_url": "https://stembolthq.github.io/battle_snake/tongue-snakehead.png",
+    "head_type": "tongue",
+    "tail_type": "skinny-tail",
+    "taunt": {
+      "move": "Pen-Pineapple-Apple-Pen!",
+      "start": "I have a pen~ I have an apple~"
+    }
+  }
 }

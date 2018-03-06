@@ -14,7 +14,6 @@
   "dependencies": {
     "body-parser": "^1.16.1",
     "express": "^4.14.1",
-    "immutable": "^3.8.1",
     "mocha": "^3.2.0",
     "morgan": "^1.8.1",
     "nodemon": "^1.11.0",
@@ -29,6 +28,6 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "test": "./node_modules/.bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha"
   }
 }
