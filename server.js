@@ -40,6 +40,7 @@ app.use('*',function (req, res, next) {
 // 404 handler middleware, respond with JSON only
 app.use(function (err, req, res, next) {
   if (err.status !== 404) {
+    console.log(err)
     return next(err)
   }
 

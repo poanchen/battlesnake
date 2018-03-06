@@ -22,12 +22,11 @@
   "devDependencies": {
     "foreman": "^2.0.0"
   },
-  "main": "index.js",
+  "main": "server.js",
   "engines": {
     "node": "6.x"
   },
   "scripts": {
-    "start": "nodemon server.js",
-    "test": "./node_modules/mocha/bin/mocha"
+    "start": "nodemon server.js"
   }
 }
