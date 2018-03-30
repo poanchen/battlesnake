@@ -37,7 +37,7 @@ should be more deterministic. Right now, it simply just grab the first tail from
 - Implement Voronoi Analysis to allow our snake to have more space to reduce chances of getting trap. (https://github.com/nbw/battlesnake_crystal)
 
 ## Live game played during BattleSnake 2018
-- [Battlesnake 2018 Live game played](https://www.twitch.tv/videos/234961139?t=02h12m20s) (Our team was the Team One Piece)
+- [Battlesnake 2018 Live game played](https://youtu.be/OYPC9fo4fE4?t=2h7m31s) (Our team was the Team One Piece)
 
 Note: Sadly, we did not enter the semi-final for the intermediate bracket at the end. However, we were doing pretty well 
 with just two of us left in the game.
